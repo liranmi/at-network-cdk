@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { CustomNetworkAcl } from '../code/nacl/network-acl';
-import { NaclConfig } from '../../config/nacl';
+import { NaclConfig } from '../../lib/types/nacl';
 
 interface NaclInterval {
   start: number;

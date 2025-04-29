@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
-import { NaclConfig, NaclRuleConfig } from '../../../config/nacl';
+import { NaclConfig, NaclRuleConfig } from '../../../lib/types/nacl';
 
 export class CustomNetworkAcl extends Construct {
   public readonly networkAcl: ec2.CfnNetworkAcl;

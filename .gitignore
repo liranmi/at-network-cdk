@@ -1,0 +1,46 @@
+# Ignore everything
+*
+
+# Allow directories we want to track
+!*/
+!config/
+!lib/
+!tests/
+!bin/
+
+# But not TypeScript files
+!*.ts
+
+# And not TypeScript configuration files
+!tsconfig.json
+
+# Don't ignore .gitignore
+!.gitignore
+
+# But ignore TypeScript build artifacts
+*.js
+*.d.ts
+*.js.map
+*.d.ts.map
+
+# Ignore node_modules
+node_modules/
+
+# Ignore coverage reports
+coverage/
+
+# Ignore CDK output directory
+cdk.out/
+
+# Ignore package files
+package.json
+package-lock.json
+
+# Ignore other common files
+.git/
+.vscode/
+*.log
+.DS_Store
+
+# CDK asset staging directory
+.cdk.staging
