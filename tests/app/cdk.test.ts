@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { CdkStack } from '../lib/stacks/cdk-stack';
-import { AppConfig } from '../config';
+import { CdkStack } from '../../lib/stacks/cdk-stack';
+import { AppConfig } from '../../config';
 
 describe('CdkStack', () => {
   let app: cdk.App;

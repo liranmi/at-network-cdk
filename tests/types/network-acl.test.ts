@@ -13,7 +13,7 @@ describe('CustomNetworkAcl', () => {
   beforeEach(() => {
     app = new cdk.App();
     stack = new cdk.Stack(app, 'TestStack');
-    
+
     // Create a test VPC
     vpc = new ec2.Vpc(stack, 'TestVpc', {
       maxAzs: 2,
@@ -74,7 +74,7 @@ describe('CustomNetworkAcl', () => {
 
     // Assert Network ACL creation
     template.resourceCountIs('AWS::EC2::NetworkAcl', 1);
-    
+
     // Using partial assertion instead of exact match
     template.hasResourceProperties('AWS::EC2::NetworkAcl', {
       Tags: [
@@ -87,7 +87,7 @@ describe('CustomNetworkAcl', () => {
 
     // Assert Network ACL Entry creation
     template.resourceCountIs('AWS::EC2::NetworkAclEntry', 3);
-    
+
     // Assert ingress rule
     template.hasResourceProperties('AWS::EC2::NetworkAclEntry', {
       Protocol: -1,
