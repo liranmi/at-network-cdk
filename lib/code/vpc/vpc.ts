@@ -14,7 +14,7 @@ export class CustomVpc extends Construct {
         super(scope, id);
 
         // Validate that either CIDR or IPAM configuration is provided
-        if (!props.vpcConfig.cidr && !(props.vpcConfig.ipv4IpamPoolId && props.vpcConfig.ipv4NetmaskLength)) {
+        if (!props.vpcConfig.cidrBlock && !(props.vpcConfig.ipv4IpamPoolId && props.vpcConfig.ipv4NetmaskLength)) {
             throw new Error('Either cidr or both ipv4IpamPoolId and ipv4NetmaskLength must be provided in VpcConfig');
         }
 
@@ -29,18 +29,18 @@ export class CustomVpc extends Construct {
                     defaultSubnetIpv4NetmaskLength: 24, // Using /24 as a common subnet size
                 }),
                 // When using IPAM, we need to specify a defaultCidrMask for subnets
-                enableDnsSupport: props.vpcConfig.enableDnsSupport,
-                enableDnsHostnames: props.vpcConfig.enableDnsHostnames,
-                defaultInstanceTenancy: props.vpcConfig.defaultInstanceTenancy,
+                enableDnsSupport: props.vpcConfig.enableDnsSupport as boolean,
+                enableDnsHostnames: props.vpcConfig.enableDnsHostnames as boolean,
+                defaultInstanceTenancy: props.vpcConfig.instanceTenancy as ec2.DefaultInstanceTenancy,
                 maxAzs: props.vpcConfig.maxAzs || 1, // Default to 1 AZ if not specified
             };
         } else {
             // Use CIDR (validation ensures it exists)
             vpcProps = {
-                ipAddresses: ec2.IpAddresses.cidr(props.vpcConfig.cidr!),
-                enableDnsSupport: props.vpcConfig.enableDnsSupport,
-                enableDnsHostnames: props.vpcConfig.enableDnsHostnames,
-                defaultInstanceTenancy: props.vpcConfig.defaultInstanceTenancy,
+                ipAddresses: ec2.IpAddresses.cidr(props.vpcConfig.cidrBlock!),
+                enableDnsSupport: props.vpcConfig.enableDnsSupport as boolean,
+                enableDnsHostnames: props.vpcConfig.enableDnsHostnames as boolean,
+                defaultInstanceTenancy: props.vpcConfig.instanceTenancy as ec2.DefaultInstanceTenancy,
                 maxAzs: props.vpcConfig.maxAzs || 1 // Default to 1 AZ if not specified
             };
         }
@@ -48,8 +48,8 @@ export class CustomVpc extends Construct {
         // Create the VPC using the determined configuration
         this.vpc = new ec2.Vpc(this, 'Resource', vpcProps);
         if (props.vpcConfig.tags) {
-            Object.entries(props.vpcConfig.tags).forEach(([key, value]) => {
-                Tags.of(this.vpc).add(key, value);
+            props.vpcConfig.tags.forEach((tag) => {
+                Tags.of(this.vpc).add(tag.key, tag.value);
             });
         }
     }

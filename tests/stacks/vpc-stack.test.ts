@@ -21,10 +21,10 @@ describe('VpcStack', () => {
 
         template.resourceCountIs('AWS::EC2::VPC', 1);
         template.hasResourceProperties('AWS::EC2::VPC', {
-            CidrBlock: devVpcConfig.cidr,
+            CidrBlock: devVpcConfig.cidrBlock,
             EnableDnsHostnames: devVpcConfig.enableDnsHostnames,
             EnableDnsSupport: devVpcConfig.enableDnsSupport,
-            InstanceTenancy: devVpcConfig.defaultInstanceTenancy,
+            InstanceTenancy: devVpcConfig.instanceTenancy,
         });
         // Default maxAzs is used from baseVpcConfig which devVpcConfig extends
         template.hasResourceProperties('AWS::EC2::VPC', {
@@ -64,7 +64,7 @@ describe('VpcStack', () => {
             Ipv4NetmaskLength: ipamTestConfig.ipv4NetmaskLength,
             EnableDnsHostnames: ipamTestConfig.enableDnsHostnames,
             EnableDnsSupport: ipamTestConfig.enableDnsSupport,
-            InstanceTenancy: ipamTestConfig.defaultInstanceTenancy,
+            InstanceTenancy: ipamTestConfig.instanceTenancy,
         });
         // Check for correct maxAzs from the ipam config
         template.resourceCountIs('AWS::EC2::Subnet', 4);
@@ -93,7 +93,7 @@ describe('VpcStack', () => {
 
         template.resourceCountIs('AWS::EC2::VPC', 1);
         template.hasResourceProperties('AWS::EC2::VPC', {
-            CidrBlock: testVpcConfig.cidr,
+            CidrBlock: testVpcConfig.cidrBlock,
             EnableDnsHostnames: testVpcConfig.enableDnsHostnames,
             EnableDnsSupport: testVpcConfig.enableDnsSupport,
             // InstanceTenancy should be the AWS default (which is 'default')

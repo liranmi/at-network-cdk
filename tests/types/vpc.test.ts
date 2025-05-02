@@ -14,11 +14,11 @@ describe('CustomVpc Construct', () => {
 
     test('creates VPC resource with CIDR configuration', () => {
         const vpcConfig: VpcConfig = {
-            cidr: '10.1.0.0/16',
+            cidrBlock: '10.1.0.0/16',
             maxAzs: 2,
             enableDnsHostnames: true,
             enableDnsSupport: true,
-            defaultInstanceTenancy: ec2.DefaultInstanceTenancy.DEDICATED,
+            instanceTenancy: ec2.DefaultInstanceTenancy.DEDICATED,
         };
         new CustomVpc(stack, 'MyTestVpcConstructCidr', { vpcConfig });
         const template = Template.fromStack(stack);
@@ -56,7 +56,7 @@ describe('CustomVpc Construct', () => {
     });
 
     test('uses default maxAzs if not provided', () => {
-        const vpcConfig: VpcConfig = { cidr: '10.2.0.0/16' };
+        const vpcConfig: VpcConfig = { cidrBlock: '10.2.0.0/16' };
         new CustomVpc(stack, 'MyTestVpcConstructDefaultAz', { vpcConfig });
         const template = Template.fromStack(stack);
 
@@ -96,7 +96,7 @@ describe('CustomVpc Construct', () => {
     });
 
     test('exposes the created vpc object', () => {
-        const vpcConfig: VpcConfig = { cidr: '10.3.0.0/16' };
+        const vpcConfig: VpcConfig = { cidrBlock: '10.3.0.0/16' };
         const customVpc = new CustomVpc(stack, 'MyTestVpcConstructExposure', { vpcConfig });
 
         expect(customVpc.vpc).toBeDefined();

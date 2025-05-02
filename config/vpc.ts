@@ -8,7 +8,7 @@ import { VpcConfig } from '../lib/types/vpc';
 const baseVpcConfig: Partial<VpcConfig> = {
     enableDnsHostnames: true,
     enableDnsSupport: true,
-    defaultInstanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
+    instanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
     maxAzs: 2,
 };
 
@@ -18,11 +18,11 @@ const baseVpcConfig: Partial<VpcConfig> = {
  */
 export const devVpcConfig: VpcConfig = {
     ...baseVpcConfig,
-    cidr: '10.0.0.0/16',
-    tags: {
-        'Environment': 'dev',
-        'Project': 'my-project',
-    },
+    cidrBlock: '10.0.0.0/16',
+    tags: [
+        { key: 'Environment', value: 'dev' },
+        { key: 'Project', value: 'my-project' },
+    ],
 };
 
 /**
@@ -31,7 +31,7 @@ export const devVpcConfig: VpcConfig = {
  */
 export const prodVpcConfig: VpcConfig = {
     ...baseVpcConfig,
-    cidr: '172.16.0.0/16',
+    cidrBlock: '172.16.0.0/16',
     maxAzs: 3,
 };
 
@@ -40,7 +40,7 @@ export const prodVpcConfig: VpcConfig = {
  * Defines all properties explicitly.
  */
 export const testVpcConfig: VpcConfig = {
-    cidr: '192.168.0.0/16',
+    cidrBlock: '192.168.0.0/16',
     enableDnsHostnames: true,
     enableDnsSupport: true,
     maxAzs: 2,
