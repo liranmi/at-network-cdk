@@ -39,48 +39,56 @@ export interface SubnetConfig extends CfnSubnetProps {
 }
 
 /**
- * Splits an array of SubnetConfig into:
- *  - l2Configs: SubnetConfiguration[] suitable for Vpc.subnetConfiguration
- *  - l1Configs: SubnetConfig[] suitable for later CfnSubnet creation
+ * Classifies raw subnet descriptions into:
+ *  – l2Configs   → safe to pass to Vpc.addSubnet() (SubnetConfiguration)
+ *  – l1Configs   → must be created as CfnSubnet to preserve all flags
  */
 export function splitSubnetConfigs(
-  configs: SubnetConfig[]
+  configs: SubnetConfig[],
 ): {
   l2Configs: SubnetConfiguration[];
   l1Configs: SubnetConfig[];
 } {
+  // Props that SubnetConfiguration understands today
+  const SIMPLE_KEYS = new Set([
+    'name',                          // logical name
+    'subnetType',                    // PUBLIC | PRIVATE_ISOLATED | PRIVATE_WITH_EGRESS
+    'cidrBlock',                     // required by L2
+    'mapPublicIpOnLaunch',           // same meaning in both layers
+    'assignIpv6AddressOnCreation',   // ↔︎ ipv6AssignAddressOnCreation
+    'ipv6CidrBlock',                 // optional dual‑stack
+  ]);
+
   const l2Configs: SubnetConfiguration[] = [];
   const l1Configs: SubnetConfig[] = [];
 
   for (const cfg of configs) {
-    const hasAdvanced =
-      cfg.ipv6CidrBlock !== undefined ||
-      cfg.assignIpv6AddressOnCreation !== undefined ||
-      cfg.enableDns64 !== undefined ||
-      cfg.outpostArn !== undefined;
+    const keys = Object.keys(cfg).filter(
+      k => (cfg as any)[k] !== undefined,           // keep only set props
+    );
 
-    if (hasAdvanced) {
-      // Defer advanced cases to L1 (CfnSubnet)
+    const l2Safe =
+      cfg.cidrBlock !== undefined &&                // L2 insists on IPv4 block
+      keys.every(k => SIMPLE_KEYS.has(k));          // only simple fields present
+
+    if (!l2Safe) {
+      // Anything exotic (IPAM, enableDns64, ipv6Native, Outposts, …) falls back to L1
       l1Configs.push(cfg);
-    } else {
-      // Translate L1 props to L2 SubnetConfiguration
-      // Extract mask from cidrBlock, e.g. '10.0.1.0/24'
-      const [_, maskStr] = cfg.cidrBlock!.split('/');
-      const cidrMask = parseInt(maskStr, 10);
-
-      const subnetConfig: SubnetConfiguration = {
-        name: cfg.name,
-        subnetType: cfg.subnetType,
-        cidrMask,
-        // L2 mapPublicIpOnLaunch matches Cfn's mapPublicIpOnLaunch
-        mapPublicIpOnLaunch: cfg.mapPublicIpOnLaunch as boolean,
-        // If user set assignIpv6AddressOnCreation, translate to ipv6AssignAddressOnCreation
-        ipv6AssignAddressOnCreation: cfg.assignIpv6AddressOnCreation,
-      };
-
-      l2Configs.push(subnetConfig);
+      continue;
     }
+
+    // ---------- translate to SubnetConfiguration ----------
+    const cidrMask = parseInt(cfg.cidrBlock.split('/')[1], 10);
+
+    l2Configs.push({
+      name: cfg.name,
+      subnetType: cfg.subnetType,
+      cidrMask,
+      mapPublicIpOnLaunch: cfg.mapPublicIpOnLaunch as boolean,
+      ipv6AssignAddressOnCreation: cfg.assignIpv6AddressOnCreation as boolean,
+    });
   }
 
   return { l2Configs, l1Configs };
 }
+
