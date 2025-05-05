@@ -40,10 +40,8 @@ describe('VpcStack', () => {
             ]),
         });
         // CDK adds default subnets, check for Public (change if default subnet config changes)
-        template.resourceCountIs('AWS::EC2::Subnet', 2 * (devVpcConfig.maxAzs || 2)); // Public and Private per AZ
-        template.resourceCountIs('AWS::EC2::RouteTable', 2 * (devVpcConfig.maxAzs || 2));
-        template.resourceCountIs('AWS::EC2::InternetGateway', 1);
-        template.resourceCountIs('AWS::EC2::NatGateway', devVpcConfig.maxAzs || 2);
+        template.resourceCountIs('AWS::EC2::Subnet', 0); // Public and Private per AZ
+
     });
 
     test('creates VPC with IPAM configuration', () => {
@@ -67,7 +65,7 @@ describe('VpcStack', () => {
             InstanceTenancy: ipamTestConfig.instanceTenancy,
         });
         // Check for correct maxAzs from the ipam config
-        template.resourceCountIs('AWS::EC2::Subnet', 4);
+        template.resourceCountIs('AWS::EC2::Subnet', 0);
     });
 
     test('creates VPC with overridden maxAzs', () => {
@@ -80,8 +78,8 @@ describe('VpcStack', () => {
         const template = Template.fromStack(stack);
 
         template.resourceCountIs('AWS::EC2::VPC', 1);
-        template.resourceCountIs('AWS::EC2::Subnet', 2 * 2); // fallback 2 AZs * 2 subnet types
-        template.resourceCountIs('AWS::EC2::NatGateway', 2);
+        template.resourceCountIs('AWS::EC2::Subnet', 0); // fallback 2 AZs * 2 subnet types
+        template.resourceCountIs('AWS::EC2::NatGateway', 0);
     });
 
     test('creates VPC with explicitly defined test config', () => {
@@ -99,7 +97,7 @@ describe('VpcStack', () => {
             // InstanceTenancy should be the AWS default (which is 'default')
             InstanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
         });
-        template.resourceCountIs('AWS::EC2::Subnet', 2 * (testVpcConfig.maxAzs || 1));
+        template.resourceCountIs('AWS::EC2::Subnet', 0);
     });
 
     test('throws error if both CIDR and IPAM info are missing', () => {

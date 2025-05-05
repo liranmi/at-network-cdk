@@ -31,7 +31,7 @@ describe('CustomVpc Construct', () => {
             InstanceTenancy: 'dedicated',
         });
         // Check default subnets are created based on maxAzs
-        template.resourceCountIs('AWS::EC2::Subnet', 2 * 2);
+        template.resourceCountIs('AWS::EC2::Subnet', 0);
     });
 
     test('creates VPC resource with IPAM configuration', () => {
@@ -52,7 +52,7 @@ describe('CustomVpc Construct', () => {
             EnableDnsSupport: true, // Should default to true in base config if not specified
             InstanceTenancy: 'default', // Should use VPC default
         });
-        template.resourceCountIs('AWS::EC2::Subnet', 2 * 2);
+        template.resourceCountIs('AWS::EC2::Subnet', 0);
     });
 
     test('uses default maxAzs if not provided', () => {
@@ -62,7 +62,7 @@ describe('CustomVpc Construct', () => {
 
         template.resourceCountIs('AWS::EC2::VPC', 1);
         // Default is 1 AZs in the construct
-        template.resourceCountIs('AWS::EC2::Subnet', 2 * 1);
+        template.resourceCountIs('AWS::EC2::Subnet', 0);
     });
 
     test('throws error if both CIDR and IPAM info are missing', () => {

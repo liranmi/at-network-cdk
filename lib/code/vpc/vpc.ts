@@ -1,7 +1,8 @@
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Tags } from 'aws-cdk-lib';
-import { VpcConfig } from '../../types/vpc';
+import { VpcConfig, maskFromCidr, SubnetConfig } from '../../types/vpc';
+import { CfnSubnet } from 'aws-cdk-lib/aws-ec2';
 
 export interface CustomVpcProps {
     vpcConfig: VpcConfig;
@@ -18,6 +19,15 @@ export class CustomVpc extends Construct {
             throw new Error('Either cidr or both ipv4IpamPoolId and ipv4NetmaskLength must be provided in VpcConfig');
         }
 
+        // 1️⃣ Convert your SubnetConfig[] → L2 SubnetConfiguration[]
+        const l2Configs: ec2.SubnetConfiguration[] = (props.vpcConfig.subnetConfigs ?? []).map(cfg => ({
+            name: cfg.name,
+            subnetType: cfg.subnetType,
+            cidrMask: maskFromCidr(cfg.cidrBlock!),
+            // Optional L2-only configuration overrides
+            mapPublicIpOnLaunch: cfg.mapPublicIpOnLaunch as boolean | undefined,
+            ipv6AssignAddressOnCreation: cfg.assignIpv6AddressOnCreation as boolean | undefined,
+        }));
 
         // Determine IP addressing strategy
         let vpcProps: ec2.VpcProps;
@@ -34,6 +44,7 @@ export class CustomVpc extends Construct {
                 enableDnsHostnames: props.vpcConfig.enableDnsHostnames as boolean,
                 defaultInstanceTenancy: props.vpcConfig.instanceTenancy as ec2.DefaultInstanceTenancy,
                 maxAzs: props.vpcConfig.maxAzs || 1, // Default to 1 AZ if not specified
+                subnetConfiguration: l2Configs as ec2.SubnetConfiguration[],
             };
         } else {
             // Use CIDR (validation ensures it exists)
@@ -43,8 +54,10 @@ export class CustomVpc extends Construct {
                 enableDnsHostnames: props.vpcConfig.enableDnsHostnames as boolean,
                 defaultInstanceTenancy: props.vpcConfig.instanceTenancy as ec2.DefaultInstanceTenancy,
                 maxAzs: props.vpcConfig.maxAzs || 1, // Default to 1 AZ if not specified
+                subnetConfiguration: l2Configs as ec2.SubnetConfiguration[],
             };
         }
+
 
         // Create the VPC using the determined configuration
         this.vpc = new ec2.Vpc(this, 'Resource', vpcProps);
@@ -55,7 +68,46 @@ export class CustomVpc extends Construct {
             });
         }
 
+        // 3️⃣ Apply overrides for any L1-only props in each SubnetConfig
+        this.applyL1Overrides(this.vpc, props.vpcConfig.subnetConfigs ?? []);
 
+    }
+    /**
+     * Applies L1-only CfnSubnet properties via escape-hatch on the L2 Subnet
+     */
+    private applyL1Overrides(vpc: ec2.Vpc, subnetConfigs: SubnetConfig[]) {
+        for (const cfg of subnetConfigs) {
+            // pick the first subnet in that group
+            const subnet = vpc.selectSubnets({ subnetGroupName: cfg.name }).subnets[0];
+            const cfn = subnet.node.defaultChild as CfnSubnet;
 
+            if (cfg.availabilityZoneId) {
+                cfn.availabilityZone = undefined;
+                cfn.availabilityZoneId = cfg.availabilityZoneId;
+            }
+            if (cfg.enableDns64 !== undefined) {
+                cfn.enableDns64 = cfg.enableDns64;
+            }
+            if (cfg.enableLniAtDeviceIndex !== undefined) {
+                cfn.enableLniAtDeviceIndex = cfg.enableLniAtDeviceIndex;
+            }
+            if (cfg.ipv4IpamPoolId) {
+                cfn.ipv4IpamPoolId = cfg.ipv4IpamPoolId;
+                cfn.ipv4NetmaskLength = cfg.ipv4NetmaskLength!;
+            }
+            if (cfg.ipv6IpamPoolId) {
+                cfn.ipv6IpamPoolId = cfg.ipv6IpamPoolId;
+                cfn.ipv6NetmaskLength = cfg.ipv6NetmaskLength!;
+            }
+            if (cfg.ipv6Native !== undefined) {
+                cfn.ipv6Native = cfg.ipv6Native;
+            }
+            if (cfg.outpostArn) {
+                cfn.outpostArn = cfg.outpostArn;
+            }
+            if (cfg.privateDnsNameOptionsOnLaunch) {
+                cfn.addPropertyOverride('PrivateDnsNameOptionsOnLaunch', cfg.privateDnsNameOptionsOnLaunch);
+            }
+        }
     }
 } 

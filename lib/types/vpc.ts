@@ -26,3 +26,10 @@ export interface SubnetConfig extends CfnSubnetProps {
   readonly subnetType: SubnetType;
 }
 
+export function maskFromCidr(cidr: string): number {
+  const parts = cidr.split('/');
+  if (parts.length !== 2) {
+    throw new Error(`invalid CIDR: ${cidr}`);
+  }
+  return parseInt(parts[1], 10);
+}
