@@ -1,7 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { CdkStack } from '../../lib/stacks/cdk-stack';
-import { AppConfig } from '../../config';
+import { VpcStack } from '../../lib/stacks/vpc-stack';
+import { devVpcConfig } from '../../config/vpc';
+
 
 describe('CdkStack', () => {
   let app: cdk.App;
@@ -11,17 +12,10 @@ describe('CdkStack', () => {
   });
 
   test('creates a VPC', () => {
-    const testConfig: AppConfig = {
-      vpc: {
-        cidr: '10.0.0.0/16',
-        maxAzs: 2
-      },
-      securityGroups: [],
-      nacls: []
-    };
 
-    const stack = new CdkStack(app, 'TestCdkStack', {
-      appConfig: testConfig
+
+    const stack = new VpcStack(app, 'TestVpcStack', {
+      vpcConfig: devVpcConfig
     });
 
     // Synthesize the stack
