@@ -23,7 +23,8 @@ export class CustomVpc extends Construct {
         const l2Configs: ec2.SubnetConfiguration[] = (props.vpcConfig.subnetConfigs ?? []).map(cfg => ({
             name: cfg.name,
             subnetType: cfg.subnetType,
-            cidrMask: maskFromCidr(cfg.cidrBlock!),
+            // Only use cidrMask for CIDR-based subnets
+            cidrMask: props.vpcConfig.cidrBlock ? maskFromCidr(cfg.cidrBlock!) : undefined,
             // Optional L2-only configuration overrides
             mapPublicIpOnLaunch: cfg.mapPublicIpOnLaunch as boolean | undefined,
             ipv6AssignAddressOnCreation: cfg.assignIpv6AddressOnCreation as boolean | undefined,
@@ -43,7 +44,7 @@ export class CustomVpc extends Construct {
                 enableDnsSupport: props.vpcConfig.enableDnsSupport as boolean,
                 enableDnsHostnames: props.vpcConfig.enableDnsHostnames as boolean,
                 defaultInstanceTenancy: props.vpcConfig.instanceTenancy as ec2.DefaultInstanceTenancy,
-                maxAzs: props.vpcConfig.maxAzs || 1, // Default to 1 AZ if not specified
+                maxAzs: 1, // Currently hardcoded to 1 AZ
                 subnetConfiguration: l2Configs as ec2.SubnetConfiguration[],
             };
         } else {
@@ -53,11 +54,10 @@ export class CustomVpc extends Construct {
                 enableDnsSupport: props.vpcConfig.enableDnsSupport as boolean,
                 enableDnsHostnames: props.vpcConfig.enableDnsHostnames as boolean,
                 defaultInstanceTenancy: props.vpcConfig.instanceTenancy as ec2.DefaultInstanceTenancy,
-                maxAzs: props.vpcConfig.maxAzs || 1, // Default to 1 AZ if not specified
+                maxAzs: 1, // Currently hardcoded to 1 AZ
                 subnetConfiguration: l2Configs as ec2.SubnetConfiguration[],
             };
         }
-
 
         // Create the VPC using the determined configuration
         this.vpc = new ec2.Vpc(this, 'Resource', vpcProps);
@@ -70,8 +70,8 @@ export class CustomVpc extends Construct {
 
         // 3️⃣ Apply overrides for any L1-only props in each SubnetConfig
         this.applyL1Overrides(this.vpc, props.vpcConfig.subnetConfigs ?? []);
-
     }
+
     /**
      * Applies L1-only CfnSubnet properties via escape-hatch on the L2 Subnet
      */

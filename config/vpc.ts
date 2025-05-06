@@ -9,7 +9,6 @@ const baseVpcConfig: Partial<VpcConfig> = {
     enableDnsHostnames: true,
     enableDnsSupport: true,
     instanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
-    maxAzs: 2,
 };
 
 /**
@@ -32,7 +31,6 @@ export const devVpcConfig: VpcConfig = {
 export const prodVpcConfig: VpcConfig = {
     ...baseVpcConfig,
     cidrBlock: '172.16.0.0/16',
-    maxAzs: 3,
 };
 
 /**
@@ -43,7 +41,6 @@ export const testVpcConfig: VpcConfig = {
     cidrBlock: '192.168.0.0/16',
     enableDnsHostnames: true,
     enableDnsSupport: true,
-    maxAzs: 2,
     // defaultInstanceTenancy will use the VPC default if not specified
 };
 
@@ -56,7 +53,6 @@ export const ipamVpcConfig: VpcConfig = {
     ipv4IpamPoolId: 'ipam-pool-xxxxxxxxxxxxxxxxx', // <-- Replace with your actual IPAM Pool ID
     ipv4NetmaskLength: 16, // Example netmask length for IPAM allocation
     ...baseVpcConfig, // Include common settings
-    maxAzs: 3, // Override maxAzs for this specific config
 };
 
 // Default VPC configuration to use if not specified (e.g., for a default deployment)

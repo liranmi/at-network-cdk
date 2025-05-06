@@ -105,7 +105,6 @@ describe('VpcStack', () => {
             // No cidr
             // No ipv4IpamPoolId
             // No ipv4NetmaskLength
-            maxAzs: 1,
         };
         expect(() => {
             new VpcStack(app, 'TestInvalidVpcStack', {
@@ -118,7 +117,6 @@ describe('VpcStack', () => {
         const invalidConfig: VpcConfig = {
             ipv4IpamPoolId: 'ipam-pool-test12345',
             // No ipv4NetmaskLength
-            maxAzs: 1,
         };
         expect(() => {
             new VpcStack(app, 'TestInvalidIpamStack1', {
@@ -131,7 +129,6 @@ describe('VpcStack', () => {
         const invalidConfig: VpcConfig = {
             ipv4NetmaskLength: 24,
             // No ipv4IpamPoolId
-            maxAzs: 1,
         };
         expect(() => {
             new VpcStack(app, 'TestInvalidIpamStack2', {

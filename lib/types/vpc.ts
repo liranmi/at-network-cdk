@@ -8,7 +8,6 @@ export interface VpcConfig extends ec2.CfnVPCProps {
    */
 
   readonly subnetConfigs?: SubnetConfig[];
-  readonly maxAzs?: number;
 }
 
 /**

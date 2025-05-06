@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { CustomVpc } from '../../lib/code/vpc/vpc';
-import { VpcConfig } from '../../lib/types/vpc';
+import { VpcConfig, SubnetConfig } from '../../lib/types/vpc';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
 describe('CustomVpc Construct', () => {
@@ -12,10 +12,27 @@ describe('CustomVpc Construct', () => {
         stack = new cdk.Stack();
     });
 
-    test('creates VPC resource with CIDR configuration', () => {
+    test('creates VPC resource with CIDR configuration and subnets', () => {
+        const subnetConfigs: SubnetConfig[] = [
+            {
+                name: 'public',
+                subnetType: ec2.SubnetType.PUBLIC,
+                cidrBlock: '10.1.0.0/24',
+                availabilityZone: 'us-east-1a',
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' })
+            },
+            {
+                name: 'private',
+                subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+                cidrBlock: '10.1.1.0/24',
+                availabilityZone: 'us-east-1a',
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' })
+            }
+        ];
+
         const vpcConfig: VpcConfig = {
             cidrBlock: '10.1.0.0/16',
-            maxAzs: 2,
+            subnetConfigs,
             enableDnsHostnames: true,
             enableDnsSupport: true,
             instanceTenancy: ec2.DefaultInstanceTenancy.DEDICATED,
@@ -30,15 +47,29 @@ describe('CustomVpc Construct', () => {
             EnableDnsSupport: true,
             InstanceTenancy: 'dedicated',
         });
-        // Check default subnets are created based on maxAzs
-        template.resourceCountIs('AWS::EC2::Subnet', 0);
+        template.resourceCountIs('AWS::EC2::Subnet', 2);
     });
 
-    test('creates VPC resource with IPAM configuration', () => {
+    test('creates VPC resource with IPAM configuration and subnets', () => {
+        const subnetConfigs: SubnetConfig[] = [
+            {
+                name: 'public',
+                subnetType: ec2.SubnetType.PUBLIC,
+                availabilityZone: 'us-east-1a',
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructIpamVpc' })
+            },
+            {
+                name: 'private',
+                subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+                availabilityZone: 'us-east-1a',
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructIpamVpc' })
+            }
+        ];
+
         const vpcConfig: VpcConfig = {
             ipv4IpamPoolId: 'ipam-pool-testabcdefg',
             ipv4NetmaskLength: 22,
-            maxAzs: 3,
+            subnetConfigs,
             enableDnsHostnames: false,
         };
         new CustomVpc(stack, 'MyTestVpcConstructIpam', { vpcConfig });
@@ -49,26 +80,27 @@ describe('CustomVpc Construct', () => {
             Ipv4IpamPoolId: 'ipam-pool-testabcdefg',
             Ipv4NetmaskLength: 22,
             EnableDnsHostnames: false,
-            EnableDnsSupport: true, // Should default to true in base config if not specified
-            InstanceTenancy: 'default', // Should use VPC default
+            EnableDnsSupport: true,
+            InstanceTenancy: 'default',
         });
-        template.resourceCountIs('AWS::EC2::Subnet', 0);
+        template.resourceCountIs('AWS::EC2::Subnet', 2);
     });
 
-    test('uses default maxAzs if not provided', () => {
-        const vpcConfig: VpcConfig = { cidrBlock: '10.2.0.0/16' };
+    test('creates VPC with minimal configuration', () => {
+        const vpcConfig: VpcConfig = {
+            cidrBlock: '10.2.0.0/16',
+            subnetConfigs: []
+        };
         new CustomVpc(stack, 'MyTestVpcConstructDefaultAz', { vpcConfig });
         const template = Template.fromStack(stack);
 
         template.resourceCountIs('AWS::EC2::VPC', 1);
-        // Default is 1 AZs in the construct
         template.resourceCountIs('AWS::EC2::Subnet', 0);
     });
 
     test('throws error if both CIDR and IPAM info are missing', () => {
         const invalidConfig: VpcConfig = {
-            // No cidr or IPAM
-            maxAzs: 1,
+            subnetConfigs: []
         };
         expect(() => {
             new CustomVpc(stack, 'InvalidConstruct1', { vpcConfig: invalidConfig });
@@ -78,7 +110,7 @@ describe('CustomVpc Construct', () => {
     test('throws error if only ipv4IpamPoolId is provided', () => {
         const invalidConfig: VpcConfig = {
             ipv4IpamPoolId: 'ipam-pool-test12345',
-            maxAzs: 1,
+            subnetConfigs: []
         };
         expect(() => {
             new CustomVpc(stack, 'InvalidConstruct2', { vpcConfig: invalidConfig });
@@ -88,7 +120,7 @@ describe('CustomVpc Construct', () => {
     test('throws error if only ipv4NetmaskLength is provided', () => {
         const invalidConfig: VpcConfig = {
             ipv4NetmaskLength: 24,
-            maxAzs: 1,
+            subnetConfigs: []
         };
         expect(() => {
             new CustomVpc(stack, 'InvalidConstruct3', { vpcConfig: invalidConfig });
@@ -96,12 +128,14 @@ describe('CustomVpc Construct', () => {
     });
 
     test('exposes the created vpc object', () => {
-        const vpcConfig: VpcConfig = { cidrBlock: '10.3.0.0/16' };
+        const vpcConfig: VpcConfig = {
+            cidrBlock: '10.3.0.0/16',
+            subnetConfigs: []
+        };
         const customVpc = new CustomVpc(stack, 'MyTestVpcConstructExposure', { vpcConfig });
 
         expect(customVpc.vpc).toBeDefined();
         expect(customVpc.vpc).toBeInstanceOf(ec2.Vpc);
-        // Check if we can access a property (like vpcId, though it's a token during synth)
         expect(cdk.Token.isUnresolved(customVpc.vpc.vpcId)).toBe(true);
     });
 }); 
