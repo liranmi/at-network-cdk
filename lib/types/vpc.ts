@@ -14,7 +14,7 @@ export interface VpcConfig extends ec2.CfnVPCProps {
  * SubnetConfig mirrors all properties of the low-level CfnSubnet construct.
  * We can later layer on higher-level abstractions (e.g. maxAzs) around this base.
  */
-export interface SubnetConfig extends CfnSubnetProps {
+export interface SubnetConfig extends Omit<CfnSubnetProps, 'vpcId'> {
   /**
    * A friendly name for the subnet group or resource ID prefix.
    */
@@ -23,6 +23,10 @@ export interface SubnetConfig extends CfnSubnetProps {
    * L2 SubnetType hint. Must always be provided so we know how to categorize in L2.
    */
   readonly subnetType: SubnetType;
+  /**
+   * The VPC ID. This will be set at runtime when the VPC is created.
+   */
+  readonly vpcId?: string;
 }
 
 export function maskFromCidr(cidr: string): number {

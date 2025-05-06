@@ -19,14 +19,26 @@ describe('CustomVpc Construct', () => {
                 subnetType: ec2.SubnetType.PUBLIC,
                 cidrBlock: '10.1.0.0/24',
                 availabilityZone: 'us-east-1a',
-                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' })
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' }),
+                mapPublicIpOnLaunch: true,
+                enableDns64: true,
+                enableLniAtDeviceIndex: 0,
+                privateDnsNameOptionsOnLaunch: {
+                    EnableResourceNameDnsARecord: true,
+                    HostnameType: 'ip-name'
+                }
             },
             {
                 name: 'private',
                 subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
                 cidrBlock: '10.1.1.0/24',
                 availabilityZone: 'us-east-1a',
-                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' })
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' }),
+                enableDns64: false,
+                privateDnsNameOptionsOnLaunch: {
+                    EnableResourceNameDnsARecord: true,
+                    HostnameType: 'ip-name'
+                }
             }
         ];
 
@@ -56,13 +68,25 @@ describe('CustomVpc Construct', () => {
                 name: 'public',
                 subnetType: ec2.SubnetType.PUBLIC,
                 availabilityZone: 'us-east-1a',
-                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructIpamVpc' })
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructIpamVpc' }),
+                mapPublicIpOnLaunch: true,
+                enableDns64: true,
+                enableLniAtDeviceIndex: 0,
+                privateDnsNameOptionsOnLaunch: {
+                    EnableResourceNameDnsARecord: true,
+                    HostnameType: 'ip-name'
+                }
             },
             {
                 name: 'private',
                 subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
                 availabilityZone: 'us-east-1a',
-                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructIpamVpc' })
+                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructIpamVpc' }),
+                enableDns64: false,
+                privateDnsNameOptionsOnLaunch: {
+                    EnableResourceNameDnsARecord: true,
+                    HostnameType: 'ip-name'
+                }
             }
         ];
 

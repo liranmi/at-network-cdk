@@ -3,9 +3,9 @@ import { Template } from 'aws-cdk-lib/assertions';
 import { NaclStack } from '../../lib/stacks/nacl-stack';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { NaclConfig, NaclRuleConfig } from '../../lib/types/nacl';
-import { naclConfigs as configNacls } from '../../config/nacl';
+import { naclConfigs as configNacls } from '../config/examples/nacl-examples';
 
- describe('NaclStack', () => {
+describe('NaclStack', () => {
   let app: cdk.App;
   let stack: cdk.Stack;
   let vpc: ec2.Vpc;
@@ -14,7 +14,7 @@ import { naclConfigs as configNacls } from '../../config/nacl';
   beforeEach(() => {
     app = new cdk.App();
     stack = new cdk.Stack(app, 'TestStack');
-    
+
     // Create a test VPC
     vpc = new ec2.Vpc(stack, 'TestVpc', {
       maxAzs: 2,
@@ -71,7 +71,7 @@ import { naclConfigs as configNacls } from '../../config/nacl';
     ];
   });
 
-   test('creates a single stack for small NACL', () => {
+  test('creates a single stack for small NACL', () => {
     const smallConfigs = [naclConfigs[0]];
     const naclStack = new NaclStack(app, 'SmallNaclStack', {
       vpc,
@@ -84,7 +84,7 @@ import { naclConfigs as configNacls } from '../../config/nacl';
     template.resourceCountIs('AWS::EC2::NetworkAclEntry', 1);
   });
 
-   test('creates single stack for medium NACL', () => {
+  test('creates single stack for medium NACL', () => {
     const mediumConfigs = [naclConfigs[1]];
     const naclStack = new NaclStack(app, 'MediumNaclStack', {
       vpc,
@@ -97,7 +97,7 @@ import { naclConfigs as configNacls } from '../../config/nacl';
     template.resourceCountIs('AWS::CloudFormation::Stack', 0);
   });
 
-   test('creates nested stacks for multiple NACLs', () => {
+  test('creates nested stacks for multiple NACLs', () => {
     const naclStack = new NaclStack(app, 'MultipleNaclStack', {
       vpc,
       naclConfigs
@@ -108,7 +108,7 @@ import { naclConfigs as configNacls } from '../../config/nacl';
     template.resourceCountIs('AWS::CloudFormation::Stack', 2);
   });
 
-}); 
+});
 
 describe('NaclStack for 100 Subnets', () => {
   let app: cdk.App;
@@ -119,15 +119,15 @@ describe('NaclStack for 100 Subnets', () => {
   beforeEach(() => {
     app = new cdk.App();
     stack = new cdk.Stack(app, 'TestStack');
-    
+
     // Create a test VPC
     vpc = new ec2.Vpc(stack, 'TestVpc', {
       // 1) make the VPC wide enough
-      cidr: '10.0.0.0/16',
-    
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+
       // 2) don't replicate per-AZ — we'll pin everything into one AZ
       maxAzs: 1,
-    
+
       // 3) generate exactly 200 subnets (all PUBLIC here; you can mix types if you like)
       subnetConfiguration: Array.from({ length: 100 }, (_, i) => ({
         name: `PrivateSubnet${i + 1}`,
@@ -146,7 +146,7 @@ describe('NaclStack for 100 Subnets', () => {
         cidr: '0.0.0.0/0',
         egress: false,
       }));
-    
+
       // build 20 outbound rules
       const outbound: NaclRuleConfig[] = Array.from({ length: 20 }, (_, j) => ({
         ruleNumber: 200 + j,      // e.g. 200…219
@@ -155,7 +155,7 @@ describe('NaclStack for 100 Subnets', () => {
         cidr: '0.0.0.0/0',
         egress: true,
       }));
-    
+
       return {
         name: `nacl-${i + 1}`,         // "nacl-1", "nacl-2", …, "nacl-200"
         subnetType: 'Isolated',          // will associate each ACL with one Private subnet
@@ -175,5 +175,5 @@ describe('NaclStack for 100 Subnets', () => {
     template.resourceCountIs('AWS::CloudFormation::Stack', 12);
   });
 
-}); 
+});
 
