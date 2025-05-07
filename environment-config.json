@@ -1,10 +1,22 @@
 {
-    "account": null,
-    "region": null,
-    "environment": "prod",
-    "tags": {
-        "project": "liran-lab",
-        "owner": "liran",
-        "environment": "prod"
-      }
+  "environment": "dev",
+  "environments": {
+    "dev": {
+      "account": "111111111111",
+      "region":  "us-east-1"
+    },
+    "test": {
+      "account": "222222222222",
+      "region":  "us-east-2"
+    },
+    "prod": {
+      "account": "333333333333",
+      "region":  "us-west-2"
+    }
+  },
+  "tags": {
+    "project":     "liran-lab",
+    "owner":       "liran",
+    "environment": "prod"
+  }
 }
