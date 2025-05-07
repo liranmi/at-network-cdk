@@ -35,6 +35,8 @@ if (cfg.tags) {
 
 const env = { account, region };
 
+console.info(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
+
 const vpcConfig = vpcConfigs[envName];
 const naclConfigs = naclConfigsByEnv[envName] as NaclConfig[];
 
