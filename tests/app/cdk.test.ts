@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { VpcStack } from '../../lib/stacks/vpc-stack';
-import { devVpcConfig } from '../config/examples/vpc-examples';
+import { devVpcConfig } from '../network-config/examples/vpc-examples';
 
 
 describe('CdkStack', () => {

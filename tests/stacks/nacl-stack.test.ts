@@ -3,7 +3,7 @@ import { Template } from 'aws-cdk-lib/assertions';
 import { NaclStack } from '../../lib/stacks/nacl-stack';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { NaclConfig, NaclRuleConfig } from '../../lib/types/nacl';
-import { naclConfigs as configNacls } from '../config/examples/nacl-examples';
+import { naclConfigs as configNacls } from '../network-config/examples/nacl-examples';
 
 describe('NaclStack', () => {
   let app: cdk.App;

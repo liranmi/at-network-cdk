@@ -5,7 +5,7 @@ This directory contains example configurations for different AWS resources. Thes
 ## Directory Structure
 
 ```
-config/                  # Configuration directory
+network-config/           # Network configuration directory
 └── README.md           # This file
 
 tests/
