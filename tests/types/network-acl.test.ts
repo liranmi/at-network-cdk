@@ -1,8 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { CustomNetworkAcl } from '../../lib/code/nacl/network-acl';
+import { CustomNetworkAcl } from '../../lib/code/nacl/v1/network-acl';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { NaclConfig } from '../../lib/types/nacl';
+import { NaclConfig } from '../../lib/types/v1/nacl';
 
 describe('CustomNetworkAcl', () => {
   let app: cdk.App;

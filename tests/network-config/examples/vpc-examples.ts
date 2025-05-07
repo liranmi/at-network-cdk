@@ -1,5 +1,5 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { VpcConfig, SubnetConfig } from '../../../lib/types/vpc';
+import { VpcConfig, SubnetConfig } from '../../../lib/types/v1/vpc';
 
 /**
  * Example VPC configurations for different environments.
@@ -16,6 +16,7 @@ const baseVpcConfig: Partial<VpcConfig> = {
     enableDnsHostnames: true,
     enableDnsSupport: true,
     instanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
+    version: 'v1',
 };
 
 /**
@@ -61,6 +62,7 @@ export const devVpcConfig: VpcConfig = {
         { key: 'Environment', value: 'dev' },
         { key: 'Project', value: 'my-project' },
     ],
+    version: 'v1',
 };
 
 /**
@@ -283,6 +285,7 @@ export const prodVpcConfig: VpcConfig = {
         { key: 'Environment', value: 'prod' },
         { key: 'Project', value: 'my-project' },
     ],
+    version: 'v1',
 };
 
 /**
@@ -301,6 +304,7 @@ export const testVpcConfig: VpcConfig = {
         { key: 'Environment', value: 'test' },
         { key: 'Project', value: 'my-project' },
     ],
+    version: 'v1',
 };
 
 /**
@@ -317,6 +321,7 @@ export const ipamVpcConfig: VpcConfig = {
         { key: 'Environment', value: 'ipam' },
         { key: 'Project', value: 'my-project' },
     ],
+    version: 'v1',
 };
 
 // Default VPC configuration to use if not specified (e.g., for a default deployment)

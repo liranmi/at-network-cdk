@@ -1,4 +1,4 @@
-import { NaclConfig } from '../../../lib/types/nacl';
+import { NaclConfig } from '../../../lib/types/v1/nacl';
 
 /**
  * Example Network ACL configurations for different subnet types.
@@ -14,6 +14,7 @@ import { NaclConfig } from '../../../lib/types/nacl';
 export const naclConfigs: NaclConfig[] = [
     {
         name: 'public-nacl',
+        version: 'v1',
         rules: [
             {
                 ruleNumber: 100,
@@ -34,6 +35,7 @@ export const naclConfigs: NaclConfig[] = [
     },
     {
         name: 'private-nacl',
+        version: 'v1',
         rules: [
             {
                 ruleNumber: 100,

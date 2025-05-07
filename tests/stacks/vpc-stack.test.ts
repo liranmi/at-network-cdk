@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
 import { VpcStack } from '../../lib/stacks/vpc-stack';
 import { devVpcConfig, testVpcConfig, ipamVpcConfig, prodVpcConfig } from '../network-config/examples/vpc-examples';
-import { VpcConfig } from '../../lib/types/vpc';
+import { VpcConfig } from '../../lib/types/v1/vpc';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
 describe('VpcStack', () => {

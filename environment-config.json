@@ -1,6 +1,7 @@
 {
     "account": null,
     "region": null,
+    "environment": "prod",
     "tags": {
         "project": "liran-lab",
         "owner": "liran",

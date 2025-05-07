@@ -1,8 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { CustomNetworkAcl } from '../code/nacl/network-acl';
-import { NaclConfig } from '../../lib/types/nacl';
+import { createNetworkAcl } from '../code/nacl';
+import { NaclConfig } from '../types/v1/nacl';
 import { logger } from '../utils/logger';
 
 interface NaclInterval {
@@ -46,7 +46,7 @@ export class NaclStack extends cdk.Stack {
           : naclConfig.name;
 
         logger.debug(`  Creating NACL: ${naclName}`);
-        const nacl = new CustomNetworkAcl(this, naclName, {
+        const nacl = createNetworkAcl(this, naclName, {
           vpc: props.vpc,
           config: naclConfig,
         });
@@ -83,7 +83,7 @@ export class NaclStack extends cdk.Stack {
           : naclConfig.name;
 
         logger.debug(`  Creating NACL: ${naclName}`);
-        const nacl = new CustomNetworkAcl(nestedStack, naclName, {
+        const nacl = createNetworkAcl(nestedStack, naclName, {
           vpc: props.vpc,
           config: naclConfig,
         });
