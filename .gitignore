@@ -7,6 +7,14 @@
 !lib/
 !tests/
 !bin/
+!aspects/
+
+# Allow all files in tracked directories
+!config/**
+!lib/**
+!tests/**
+!bin/**
+!aspects/**
 
 # But not TypeScript files
 !*.ts
@@ -44,3 +52,6 @@ package-lock.json
 
 # CDK asset staging directory
 .cdk.staging
+
+# Allow environment config
+!environment-config.json
