@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as v1 from './v1';
-import { NaclConfig as V1NaclConfig } from '../../types/v1/nacl';
+import { NaclConfig as V1NaclConfig } from '../../schemas/nacl';
 
 /**
  * Factory function to create the appropriate version of the CustomNetworkAcl construct

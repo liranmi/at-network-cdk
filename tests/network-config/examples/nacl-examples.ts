@@ -1,4 +1,4 @@
-import { NaclConfig } from '../../../lib/types/v1/nacl';
+import { NaclConfig } from '../../../lib/schemas/nacl';
 
 /**
  * Example Network ACL configurations for different subnet types.

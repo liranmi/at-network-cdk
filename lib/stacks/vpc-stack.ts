@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { VpcConfig } from '../types/v1/vpc';
+import { VpcConfig } from '../schemas/vpc';
 import { createVpc } from '../code/vpc'; // Import the factory function
 
 export interface VpcStackProps extends cdk.StackProps {

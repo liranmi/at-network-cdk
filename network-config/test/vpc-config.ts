@@ -1,5 +1,5 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { VpcConfig } from '../../lib/types/v1/vpc';
+import { VpcConfig } from '../../lib/schemas/vpc';
 
 export const testVpcConfig: VpcConfig = {
     // VPC configuration for test environment

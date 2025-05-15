@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as v1 from './v1';
-import { VpcConfig as V1VpcConfig } from '../../types/v1/vpc';
+import { VpcConfig as V1VpcConfig } from '../../schemas/vpc';
 
 /**
  * Factory function to create the appropriate version of the CustomVpc construct

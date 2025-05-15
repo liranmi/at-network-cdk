@@ -1,5 +1,5 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { VpcConfig, SubnetConfig } from '../../../lib/types/v1/vpc';
+import { VpcConfig, SubnetConfig } from '../../../lib/schemas/vpc';
 
 /**
  * Example VPC configurations for different environments.

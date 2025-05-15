@@ -1,4 +1,4 @@
-import { NaclConfig } from '../../lib/types/v1/nacl';
+import { NaclConfig } from '../../lib/schemas/nacl';
 
 export const devNaclConfigs = [
     {

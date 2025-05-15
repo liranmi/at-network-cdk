@@ -7,7 +7,7 @@ import { VpcStack } from '../lib/stacks/vpc-stack';
 import { TaggingAspect } from '../aspects/tagging-aspect';
 import * as fs from 'fs';
 import { vpcConfigs, naclConfigsByEnv, EnvName } from '../network-config';
-import { NaclConfig } from '../lib/types/v1/nacl';
+import { NaclConfig } from '../lib/schemas/nacl';
 
 const app = new cdk.App();
 
