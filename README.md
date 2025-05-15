@@ -1,6 +1,18 @@
-# Welcome to your CDK TypeScript project
+# at-network-cdk
 
-This is a blank project for CDK development with TypeScript.
+## Prerequisites
+
+Before you begin, make sure to install the required dependencies:
+
+```sh
+npm install aws-cdk@latest
+npm install aws-cdk-lib constructs
+npm install --save-dev @types/node
+
+npm install --save-dev jest@latest @types/jest@latest ts-jest@latest
+```
+
+This will ensure you have the necessary libraries for AWS CDK, constructs, and testing.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
