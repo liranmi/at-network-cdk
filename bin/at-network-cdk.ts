@@ -48,8 +48,8 @@ const mainVpcStack = new VpcStack(app, 'VpcStack', {
 });
 
 // Create the NACL stack with the VPC from main stack
-new NaclStack(app, 'NaclStack', {
+/* new NaclStack(app, 'NaclStack', {
   vpc: mainVpcStack.vpc,
   naclConfigs,
   env
-});
+}); */
