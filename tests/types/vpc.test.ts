@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { CustomVpc } from '../../lib/code/vpc/v1/vpc';
+import { CustomVpc } from '../../lib/code/vpc/vpc';
 import { VpcConfig, SubnetConfig } from '../../lib/schemas/vpc';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 

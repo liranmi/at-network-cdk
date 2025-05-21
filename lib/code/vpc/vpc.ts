@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Tags } from 'aws-cdk-lib';
-import { VpcConfig, maskFromCidr, SubnetConfig } from '../../../schemas/vpc';
+import { VpcConfig, maskFromCidr, SubnetConfig } from '../../schemas/vpc';
 import { CfnSubnet } from 'aws-cdk-lib/aws-ec2';
 
 export interface CustomVpcProps {

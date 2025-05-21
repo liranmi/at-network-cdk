@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { VpcConfig } from '../schemas/vpc';
-import { createVpc } from '../code/vpc'; // Import the factory function
+import { CustomVpc } from '../code/vpc/vpc';
 
 export interface VpcStackProps extends cdk.StackProps {
     vpcConfig: VpcConfig;
@@ -14,8 +14,8 @@ export class VpcStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: VpcStackProps) {
         super(scope, id, props);
 
-        // Use the factory function to create the appropriate version of the CustomVpc construct
-        const customVpc = createVpc(this, 'CustomVpc', {
+        // Create the VPC directly using the CustomVpc construct
+        const customVpc = new CustomVpc(this, 'CustomVpc', {
             vpcConfig: props.vpcConfig,
         });
 

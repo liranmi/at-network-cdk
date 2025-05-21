@@ -3,7 +3,6 @@ import { NaclConfig } from '../../lib/schemas/nacl';
 export const devNaclConfigs = [
     {
         name: 'public-nacl',
-        version: 'v1',
         rules: [
             {
                 ruleNumber: 100,
@@ -24,7 +23,6 @@ export const devNaclConfigs = [
     },
     {
         name: 'private-nacl',
-        version: 'v1',
         rules: [
             {
                 ruleNumber: 100,

@@ -39,5 +39,4 @@ export const testVpcConfig: VpcConfig = {
         { key: 'Environment', value: 'test' },
         { key: 'Project', value: 'my-project' },
     ],
-    version: 'v1',
 }; 
