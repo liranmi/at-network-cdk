@@ -5,51 +5,47 @@ import { Aspects } from 'aws-cdk-lib';
 import { NaclStack } from '../lib/stacks/nacl-stack';
 import { VpcStack } from '../lib/stacks/vpc-stack';
 import { TaggingAspect } from '../aspects/tagging-aspect';
-import * as fs from 'fs';
 import { vpcConfigs, naclConfigsByEnv, EnvName } from '../network-config';
 import { NaclConfig } from '../lib/schemas/nacl';
+import { environmentConfig } from '../environment-config';
 
 const app = new cdk.App();
 
-// load and validate environment‐config.json
-const raw = fs.readFileSync('environment-config.json', 'utf8');
-const cfg = JSON.parse(raw) as {
-  environment: string;
-  environments: Record<string, { account: string; region: string }>;
-  tags?: Record<string, string>;
-};
+// Use the TypeScript environment config
+const cfg = environmentConfig;
 
-if (!cfg.environments[cfg.environment]) {
-  throw new Error(`Unknown environment "${cfg.environment}" in config`);
-}
-type E = EnvName;  // 'dev'|'test'|'prod'
-const envName = cfg.environment as E;
-const { account, region } = cfg.environments[envName];
+// Iterate through all environments
+Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
+  const { account, region } = envConfig;
 
-// apply your tags as before
-if (cfg.tags) {
-  for (const [k, v] of Object.entries(cfg.tags)) {
-    Aspects.of(app).add(new TaggingAspect(k, v), { priority: 100 });
-  }
-}
+  // Convert null values to undefined for CDK environment
+  const env = {
+    account: account ?? undefined,
+    region: region ?? undefined
+  };
 
-const env = { account, region };
+  // apply your tags as before
+  /*   if (cfg.tags) {
+      for (const [k, v] of Object.entries(cfg.tags)) {
+        Aspects.of(app).add(new TaggingAspect(k, v), { priority: 100 });
+      }
+    } */
 
-console.info(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
+  console.info(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
 
-const vpcConfig = vpcConfigs[envName];
-const naclConfigs = naclConfigsByEnv[envName] as NaclConfig[];
+  const vpcConfig = vpcConfigs[envName as EnvName];
+  const naclConfigs = naclConfigsByEnv[envName as EnvName] as NaclConfig[];
 
+  // Create the VPC stack with the VPC from main stack
+  const mainVpcStack = new VpcStack(app, `VpcStack-${envName}`, {
+    vpcConfig,
+    env
+  });
 
-// Create the VPC stack with the VPC from main stack
-const mainVpcStack = new VpcStack(app, 'VpcStack', {
-  vpcConfig,
-  env
+  // Create the NACL stack with the VPC from main stack
+  /* new NaclStack(app, `NaclStack-${envName}`, {
+    vpc: mainVpcStack.vpc,
+    naclConfigs,
+    env
+  }); */
 });
-
-// Create the NACL stack with the VPC from main stack
-/* new NaclStack(app, 'NaclStack', {
-  vpc: mainVpcStack.vpc,
-  naclConfigs,
-  env
-}); */
