@@ -16,7 +16,6 @@ describe('CustomVpc Construct', () => {
         const subnetConfigs: SubnetConfig[] = [
             {
                 name: 'public',
-                subnetType: ec2.SubnetType.PUBLIC,
                 cidrBlock: '10.1.0.0/24',
                 availabilityZone: 'us-east-1a',
                 vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' }),
@@ -24,7 +23,6 @@ describe('CustomVpc Construct', () => {
             },
             {
                 name: 'private',
-                subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
                 cidrBlock: '10.1.1.0/24',
                 availabilityZone: 'us-east-1a',
                 vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' })

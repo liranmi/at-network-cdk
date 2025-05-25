@@ -10,27 +10,16 @@ export const devVpcConfig: VpcConfig = {
     subnetConfigs: [
         {
             name: 'public',
-            subnetType: ec2.SubnetType.PUBLIC,
+            vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
             cidrBlock: '10.0.0.0/24',
-            mapPublicIpOnLaunch: true,
-            enableDns64: true,
-            enableLniAtDeviceIndex: 0,
-            privateDnsNameOptionsOnLaunch: {
-                EnableResourceNameDnsARecord: true,
-                HostnameType: 'ip-name'
-            }
+            mapPublicIpOnLaunch: true
         },
         {
             name: 'private',
-            subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
+            vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
-            cidrBlock: '10.0.1.0/24',
-            enableDns64: false,
-            privateDnsNameOptionsOnLaunch: {
-                EnableResourceNameDnsARecord: true,
-                HostnameType: 'ip-name'
-            }
+            cidrBlock: '10.0.1.0/24'
         }
     ],
     tags: {
