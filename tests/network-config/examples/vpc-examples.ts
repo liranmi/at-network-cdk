@@ -15,7 +15,7 @@ import { VpcConfig, SubnetConfig } from '../../../lib/schemas/vpc';
 const baseVpcConfig: Partial<VpcConfig> = {
     enableDnsHostnames: true,
     enableDnsSupport: true,
-    instanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
+    defaultInstanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
     version: 'v1',
 };
 
@@ -53,15 +53,15 @@ const commonSubnetConfigs: SubnetConfig[] = [
  */
 export const devVpcConfig: VpcConfig = {
     ...baseVpcConfig,
-    cidrBlock: '10.0.0.0/16',
+    ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     subnetConfigs: commonSubnetConfigs.map(subnet => ({
         ...subnet,
         cidrBlock: subnet.name === 'public' ? '10.0.0.0/24' : '10.0.1.0/24'
     })),
-    tags: [
-        { key: 'Environment', value: 'dev' },
-        { key: 'Project', value: 'my-project' },
-    ],
+    tags: {
+        Environment: 'dev',
+        Project: 'my-project'
+    },
     version: 'v1',
 };
 
@@ -71,7 +71,7 @@ export const devVpcConfig: VpcConfig = {
  */
 export const prodVpcConfig: VpcConfig = {
     ...baseVpcConfig,
-    cidrBlock: '172.16.0.0/16',
+    ipAddresses: ec2.IpAddresses.cidr('172.16.0.0/16'),
     subnetConfigs: [
         // Public Subnets (3 AZs)
         {
@@ -281,10 +281,10 @@ export const prodVpcConfig: VpcConfig = {
             }
         }
     ],
-    tags: [
-        { key: 'Environment', value: 'prod' },
-        { key: 'Project', value: 'my-project' },
-    ],
+    tags: {
+        Environment: 'prod',
+        Project: 'my-project'
+    },
     version: 'v1',
 };
 
@@ -293,36 +293,21 @@ export const prodVpcConfig: VpcConfig = {
  * Defines all properties explicitly.
  */
 export const testVpcConfig: VpcConfig = {
-    cidrBlock: '192.168.0.0/16',
+    ipAddresses: ec2.IpAddresses.cidr('192.168.0.0/16'),
     enableDnsHostnames: true,
     enableDnsSupport: true,
     subnetConfigs: commonSubnetConfigs.map(subnet => ({
         ...subnet,
         cidrBlock: subnet.name === 'public' ? '192.168.0.0/24' : '192.168.1.0/24'
     })),
-    tags: [
-        { key: 'Environment', value: 'test' },
-        { key: 'Project', value: 'my-project' },
-    ],
+    tags: {
+        Environment: 'test',
+        Project: 'my-project'
+    },
     version: 'v1',
 };
 
-/**
- * IPAM-based VPC configuration.
- * Uses IPAM for CIDR allocation instead of specifying it directly.
- */
-export const ipamVpcConfig: VpcConfig = {
-    // cidr is intentionally omitted when using IPAM
-    ipv4IpamPoolId: 'ipam-pool-xxxxxxxxxxxxxxxxx', // <-- Replace with your actual IPAM Pool ID
-    ipv4NetmaskLength: 16, // Example netmask length for IPAM allocation
-    ...baseVpcConfig, // Include common settings
-    subnetConfigs: commonSubnetConfigs,
-    tags: [
-        { key: 'Environment', value: 'ipam' },
-        { key: 'Project', value: 'my-project' },
-    ],
-    version: 'v1',
-};
+
 
 // Default VPC configuration to use if not specified (e.g., for a default deployment)
 export const defaultVpcConfig = devVpcConfig; 

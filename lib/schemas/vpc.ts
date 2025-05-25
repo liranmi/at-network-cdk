@@ -1,7 +1,7 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { CfnSubnetProps, SubnetType, SubnetConfiguration } from 'aws-cdk-lib/aws-ec2';
 
-export interface VpcConfig extends ec2.CfnVPCProps {
+export interface VpcConfig extends ec2.VpcProps {
     /**
      * Subnet definitions. Each entry is processed via splitSubnetConfigs to
      * feed the L2 VPC construct and/or L1 CfnSubnet resources.
@@ -13,6 +13,11 @@ export interface VpcConfig extends ec2.CfnVPCProps {
      * Version identifier for the config
      */
     readonly version?: 'v1';
+
+    /**
+     * Tags to apply to the VPC
+     */
+    readonly tags?: { [key: string]: string };
 }
 
 /**

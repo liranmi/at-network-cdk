@@ -3,10 +3,10 @@ import { VpcConfig } from '../../lib/schemas/vpc';
 
 export const prodVpcConfig: VpcConfig = {
     // VPC configuration for prod environment
-    cidrBlock: '10.0.0.0/16',
+    ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     enableDnsHostnames: true,
     enableDnsSupport: true,
-    instanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
+    defaultInstanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
     subnetConfigs: [
         {
             name: 'public',
@@ -33,8 +33,8 @@ export const prodVpcConfig: VpcConfig = {
             }
         }
     ],
-    tags: [
-        { key: 'Environment', value: 'prod' },
-        { key: 'Project', value: 'my-project' },
-    ],
+    tags: {
+        Environment: 'prod',
+        Project: 'my-project'
+    },
 }; 
