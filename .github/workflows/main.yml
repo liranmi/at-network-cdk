@@ -21,6 +21,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install AWS CDK CLI
+        run: npm install -g aws-cdk@latest
+
+      - name: Install CDK libraries and constructs
+        run: npm install aws-cdk-lib constructs
+
+      - name: Install Jest & TypeScript Types
+        run: npm install --save-dev jest@latest @types/jest@latest ts-jest@latest @types/node
+
       - name: Run tests
         run: npm test
 
