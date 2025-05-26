@@ -18,9 +18,6 @@ jobs:
         with:
           node-version: '18' # Adjust as needed
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Install AWS CDK CLI
         run: npm install -g aws-cdk@latest
 
