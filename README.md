@@ -30,24 +30,26 @@ This project is a modular, schema-driven AWS CDK solution for defining and deplo
 #### 2. **Schema-Driven Infrastructure**
 - Schemas in `lib/schemas/` define the structure and allowed properties for VPCs, NACLs, and more.
 - Example: `VpcConfig` interface ensures all VPC configs have the required fields and structure.
+- Built-in security best practices like Flow Logs and restricted default security groups.
 
 #### 3. **Stacks and Constructs**
 - **VPC Stack (`lib/stacks/vpc-stack.ts`):**  
   Deploys a VPC using a factory function that selects the correct construct version based on the config.
-- **NACL Stack (`lib/stacks/nacl-stack.ts`):**  
-  Deploys Network ACLs, handling AWS resource limits by splitting into intervals/nested stacks if needed.
+- **Security Group Stack (`lib/stacks/security-group-stack.ts`):**  
+  Deploys Security Groups with automatic batching for large configurations.
 - **Custom Constructs:**  
   Located in `lib/code/vpc/` and `lib/code/nacl/`, these implement reusable logic for VPCs and NACLs.
 
 #### 4. **Aspects**
-- **TaggingAspect (`aspects/tagging-aspect.ts`):**  
-  Automatically applies tags from `environment-config.json` to all resources, unless already tagged.
+- **NamingConventionAspect (`aspects/naming-convention-aspect.ts`):**  
+  Enforces naming conventions on CloudFormation resources with configurable patterns.
 
 #### 5. **Entry Point**
 - **`bin/at-network-cdk.ts`:**  
   - Loads the environment and tags from `environment-config.json`.
   - Loads the appropriate config objects from `network-config/`.
-  - Instantiates the VPC and NACL stacks with these configs.
+  - Instantiates the VPC and Security Group stacks with these configs.
+  - Uses CDK Annotations for informative synthesis output.
 
 #### 6. **Testing**
 - Tests are located in the `tests/` directory and can be run with `npm test`.
@@ -62,7 +64,29 @@ This project is a modular, schema-driven AWS CDK solution for defining and deplo
    ```ts
    export const devVpcConfig: VpcConfig = {
      cidrBlock: '10.0.0.0/16',
-     // ...other properties
+     enableDnsHostnames: true,
+     enableDnsSupport: true,
+     // Enable Flow Logs for network monitoring
+     flowLogs: {
+       cloudwatch: {
+         trafficType: ec2.FlowLogTrafficType.ALL
+       }
+     },
+     // Restrict default security group for enhanced security
+     restrictDefaultSecurityGroup: true,
+     subnetConfigs: [
+       {
+         name: 'private',
+         subnetType: ec2.SubnetType.PRIVATE,
+         availabilityZone: 'us-east-1a',
+         cidrBlock: '10.0.0.0/24'
+       }
+     ],
+     tags: {
+       Environment: 'dev',
+       Project: 'my-project'
+     },
+     version: 'v1'
    };
    ```
 
@@ -76,75 +100,41 @@ This project is a modular, schema-driven AWS CDK solution for defining and deplo
 
 ```
 .
-├── aspects/                # CDK Aspects (e.g., tagging)
+├── aspects/                # CDK Aspects (e.g., naming conventions)
 ├── bin/                    # Entry point for CDK app
 ├── environment-config.json # Selects environment and tags
 ├── lib/
 │   ├── code/               # Custom constructs/factories for VPC, NACL, etc.
 │   ├── schemas/            # TypeScript interfaces (schemas) for config validation
-│   ├── stacks/             # CDK Stacks (VPC, NACL)
-│   └── utils/              # Utility functions (e.g., logger)
+│   ├── stacks/             # CDK Stacks (VPC, Security Groups)
+│   └── utils/              # Utility functions
 ├── network-config/         # Environment-specific config objects
 ├── tests/                  # Unit and integration tests
 └── ...
 ```
 
-## Configuration Flow
+## Security Best Practices
 
-This project uses environment-specific, generated network configuration files as input. These configuration files are TypeScript objects located in the `network-config/` directory and follow schemas defined in `lib/schemas`.
+The project implements several security best practices:
 
-The CDK app consumes these configs to synthesize and deploy AWS infrastructure.
+1. **VPC Flow Logs**
+   - Configurable through the `flowLogs` property
+   - Supports both CloudWatch and S3 destinations
+   - Helps with network monitoring and security analysis
 
-### Example: VPC Config for Dev Environment
+2. **Default Security Group Restriction**
+   - Optional `restrictDefaultSecurityGroup` property
+   - Prevents accidental exposure through default security group
+   - Forces explicit security group configuration
 
-```ts
-// network-config/dev/vpc-config.ts
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { VpcConfig } from '../../lib/schemas/vpc';
+3. **Private Subnets by Default**
+   - All subnets are private unless explicitly configured as public
+   - Enhanced security for sensitive workloads
 
-export const devVpcConfig: VpcConfig = {
-  cidrBlock: '10.0.0.0/16',
-  enableDnsHostnames: true,
-  enableDnsSupport: true,
-  instanceTenancy: ec2.DefaultInstanceTenancy.DEFAULT,
-  subnetConfigs: [
-    {
-      name: 'public',
-      subnetType: ec2.SubnetType.PUBLIC,
-      availabilityZone: 'us-east-1a',
-      cidrBlock: '10.0.0.0/24',
-      mapPublicIpOnLaunch: true,
-      enableDns64: true,
-      enableLniAtDeviceIndex: 0,
-      privateDnsNameOptionsOnLaunch: {
-        EnableResourceNameDnsARecord: true,
-        HostnameType: 'ip-name'
-      }
-    }
-  ],
-  tags: [
-    { key: 'Environment', value: 'dev' },
-    { key: 'Project', value: 'my-project' },
-  ],
-  version: 'v1',
-};
-```
-
-### Example: How the Config is Used
-
-In the CDK app (e.g., `bin/at-network-cdk.ts`):
-
-```ts
-import { vpcConfigs } from '../network-config';
-
-const envName = 'dev'; // or from your environment-config.json
-const vpcConfig = vpcConfigs[envName];
-
-new VpcStack(app, 'VpcStack', {
-  vpcConfig,
-  env
-});
-```
+4. **Naming Conventions**
+   - Enforced through the NamingConventionAspect
+   - Configurable patterns (prefix, suffix, contains)
+   - Helps maintain consistent resource naming
 
 ## Useful commands
 
