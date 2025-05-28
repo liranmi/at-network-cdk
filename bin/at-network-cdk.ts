@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { Aspects } from 'aws-cdk-lib';
 import { VpcStack } from '../lib/stacks/vpc-stack';
-import { TaggingAspect } from '../aspects/tagging-aspect';
 import { vpcConfigs, EnvName, securityGroupConfigs } from '../network-config';
 import { AT_NETWORK_L2_VERSION, environmentConfig } from '../environment-config';
 import { SecurityGroupStack } from '../lib/stacks/security-group-stack';
@@ -12,6 +10,11 @@ const app = new cdk.App();
 
 // Use the TypeScript environment config
 const cfg = environmentConfig;
+
+// Add global tags to all resources in the app
+Object.entries(cfg.globalTags).forEach(([key, value]) => {
+  cdk.Tags.of(app).add(key, value);
+});
 
 // Iterate through all environments
 Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
@@ -22,7 +25,6 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
     account: account ?? undefined,
     region: region ?? undefined
   };
-
 
   console.info(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
 
@@ -48,5 +50,11 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
     vpc: mainVpcStack.vpc,
     securityGroupsConfig: securityGroupConfig,
     env
+  });
+
+  // Add environment-specific tags to all resources in this environment
+  Object.entries(envConfig.tags).forEach(([key, value]) => {
+    cdk.Tags.of(mainVpcStack).add(key, value);
+    cdk.Tags.of(securityGroupStack).add(key, value);
   });
 });
