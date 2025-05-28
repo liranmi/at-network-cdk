@@ -1,10 +1,10 @@
 // network-config/index.ts
 import { devVpcConfig } from './dev/vpc-config';
-import { devNaclConfigs } from './dev/nacl-config';
 import { testVpcConfig } from './test/vpc-config';
-import { testNaclConfigs } from './test/nacl-config';
 import { prodVpcConfig } from './prod/vpc-config';
-import { prodNaclConfigs } from './prod/nacl-config';
+import { devSecurityGroupsConfig } from './dev/security-group-config';
+import { testSecurityGroupsConfig } from './test/security-group-config';
+import { prodSecurityGroupsConfig } from './prod/security-group-config';
 
 export const vpcConfigs = {
     dev: devVpcConfig,
@@ -12,10 +12,10 @@ export const vpcConfigs = {
     prod: prodVpcConfig,
 } as const;
 
-export const naclConfigsByEnv = {
-    dev: devNaclConfigs,
-    test: testNaclConfigs,
-    prod: prodNaclConfigs,
+export const securityGroupConfigs = {
+    dev: devSecurityGroupsConfig,
+    test: testSecurityGroupsConfig,
+    prod: prodSecurityGroupsConfig,
 } as const;
 
 export type EnvName = keyof typeof vpcConfigs;

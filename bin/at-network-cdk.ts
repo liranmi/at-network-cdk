@@ -2,11 +2,9 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { Aspects } from 'aws-cdk-lib';
-import { NaclStack } from '../lib/stacks/nacl-stack';
 import { VpcStack } from '../lib/stacks/vpc-stack';
 import { TaggingAspect } from '../aspects/tagging-aspect';
-import { vpcConfigs, naclConfigsByEnv, EnvName } from '../network-config';
-import { NaclConfig } from '../lib/schemas/nacl';
+import { vpcConfigs, EnvName, securityGroupConfigs } from '../network-config';
 import { environmentConfig } from '../environment-config';
 
 const app = new cdk.App();
@@ -34,7 +32,7 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
   console.info(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
 
   const vpcConfig = vpcConfigs[envName as EnvName];
-  const naclConfigs = naclConfigsByEnv[envName as EnvName] as NaclConfig[];
+  const securityGroupConfig = securityGroupConfigs[envName as EnvName];
 
   // Create the VPC stack with the VPC from main stack
   const mainVpcStack = new VpcStack(app, `VpcStack-${envName}`, {
