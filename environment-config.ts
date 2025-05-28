@@ -19,18 +19,10 @@ interface EnvironmentConfig {
 
 export const environmentConfig: EnvironmentConfig = {
     environments: {
-        dev: {
-            account: null,
-            region: null
-        },
-        test: {
-            account: null,
-            region: null
-        }/* ,
         prod: {
             account: null,
             region: null
-        } */
+        }
     },
     tags: {
         project: 'liran-lab',

@@ -2,7 +2,6 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { SecurityGroupsConfig, SecurityGroupConfig } from '../schemas/securityGroup';
-import { logger } from '../utils/logger';
 
 export interface SecurityGroupStackProps extends cdk.StackProps {
     vpc: ec2.IVpc;
@@ -18,7 +17,7 @@ export class SecurityGroupStack extends cdk.Stack {
 
         // If no security groups to process, return early
         if (securityGroups.length === 0) {
-            logger.info('No security groups to process');
+            cdk.Annotations.of(this).addInfo('No security groups to process');
             return;
         }
 
