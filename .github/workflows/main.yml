@@ -27,9 +27,6 @@ jobs:
       - name: Install Jest & TypeScript Types
         run: npm install --save-dev jest@latest @types/jest@latest ts-jest@latest @types/node
         
-      - name: Set test script
-        run: npm set-script test "jest --coverage"
-
       - name: Install dependencies
         run: npm install
 
