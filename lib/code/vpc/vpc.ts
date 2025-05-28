@@ -16,8 +16,8 @@ export class CustomVpc extends Construct {
 
         const { subnetConfigs, version, tags, maxAzs = 1, ...vpcProps } = props.vpcConfig;
 
-        // Prevent auto subnet creation by passing an empty subnetConfiguration and set maxAzs to 1
-        const vpc = new ec2.Vpc(this, 'Resource', {
+        // Create the VPC
+        this.vpc = new ec2.Vpc(this, 'Resource', {
             ...vpcProps,
             subnetConfiguration: [],
             maxAzs,
@@ -25,11 +25,10 @@ export class CustomVpc extends Construct {
 
         // Export the VPC ID
         new cdk.CfnOutput(this, 'VpcId', {
-            value: vpc.vpcId,
+            value: this.vpc.vpcId,
             description: 'The ID of the VPC',
             exportName: `${id}-vpc-id`
         });
-
 
         // Create subnets
         if (subnetConfigs) {
@@ -44,11 +43,12 @@ export class CustomVpc extends Construct {
             }
         }
 
+        // Add tags to the VPC
         if (tags) {
             Object.entries(tags).forEach(([key, value]) => {
                 Tags.of(this.vpc).add(key, value);
             });
         }
-    }
 
+    }
 } 
