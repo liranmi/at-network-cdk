@@ -26,4 +26,5 @@ export const prodVpcConfig: VpcConfig = {
         Environment: 'prod',
         Project: 'my-project'
     },
+    version: "v1",
 }; 

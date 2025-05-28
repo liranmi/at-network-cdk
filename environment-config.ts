@@ -1,3 +1,8 @@
+/**
+ * Project version - used to track template compatibility
+ */
+export const AT_NETWORK_L2_VERSION = 'v1' as const;
+
 interface EnvironmentConfig {
     environments: {
         [key: string]: {
