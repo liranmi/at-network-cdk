@@ -26,7 +26,7 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
     region: region ?? undefined
   };
 
-  console.info(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
+  cdk.Annotations.of(app).addInfo(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
 
   const vpcConfig = vpcConfigs[envName as EnvName];
   const securityGroupConfig = securityGroupConfigs[envName as EnvName];

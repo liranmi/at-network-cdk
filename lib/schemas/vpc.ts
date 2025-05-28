@@ -18,10 +18,6 @@ export interface VpcConfig extends ec2.VpcProps {
      */
     readonly tags?: { [key: string]: string };
 
-    /**
-     * Maximum number of AZs to use
-     */
-    readonly maxAzs?: number;
 
     /**
      * VPC Flow Logs configuration
