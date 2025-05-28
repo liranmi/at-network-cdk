@@ -43,7 +43,6 @@ coverage/
 cdk.out/
 
 # Ignore package files
-package.json
 package-lock.json
 
 # Ignore other common files
