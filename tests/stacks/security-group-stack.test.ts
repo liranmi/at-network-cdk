@@ -3,6 +3,8 @@ import { Template, Match } from 'aws-cdk-lib/assertions';
 import { SecurityGroupStack } from '../../lib/stacks/security-group-stack';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { devSecurityGroupsConfig, prodSecurityGroupsConfig, largeSecurityGroupsConfig } from '../network-config/examples/security-group-examples';
+import { countResourcesAcrossStacks, getAllStacks } from '../helpers/stacks';
+import { Stack } from 'aws-cdk-lib';
 
 describe('SecurityGroupStack', () => {
     let app: cdk.App;
@@ -89,7 +91,12 @@ describe('SecurityGroupStack', () => {
 
         // Assert number of created resources 
         const expectedCount = largeSecurityGroupsConfig.securityGroups.length;
-        template.resourceCountIs('AWS::EC2::SecurityGroup', expectedCount);
+
+        const allStacks = getAllStacks(securityGroupStack);
+        const totalSecurityGroups = countResourcesAcrossStacks(allStacks, 'AWS::EC2::SecurityGroup');
+
+        expect(totalSecurityGroups).toBe(expectedCount);
+
 
         // Verify the parent stack
         template.hasResource('AWS::CloudFormation::Stack', {
