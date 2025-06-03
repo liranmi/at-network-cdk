@@ -31,12 +31,19 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
   const vpcConfig = vpcConfigs[envName as EnvName];
   const securityGroupConfig = securityGroupConfigs[envName as EnvName];
 
+  // Validate that VPC configuration exists (required)
+  if (!vpcConfig) {
+    const errorMsg = `Missing VPC configuration for environment '${envName}'. Please ensure network-config/${envName}/vpc configuration is properly defined.`;
+    cdk.Annotations.of(app).addError(errorMsg);
+    throw new Error(errorMsg);
+  }
+
   // Validate configuration versions
   if (vpcConfig.version !== AT_NETWORK_L2_VERSION) {
     throw new Error(`VPC configuration version mismatch. Expected ${AT_NETWORK_L2_VERSION}, got ${vpcConfig.version}`);
   }
 
-  if (securityGroupConfig.version !== AT_NETWORK_L2_VERSION) {
+  if (securityGroupConfig && securityGroupConfig.version !== AT_NETWORK_L2_VERSION) {
     throw new Error(`Security Group configuration version mismatch. Expected ${AT_NETWORK_L2_VERSION}, got ${securityGroupConfig.version}`);
   }
 
@@ -46,15 +53,23 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
     env
   });
 
-  const securityGroupStack = new SecurityGroupStack(app, `SecurityGroupStack-${envName}`, {
-    vpc: mainVpcStack.vpc,
-    securityGroupsConfig: securityGroupConfig,
-    env
-  });
+  // Only create SecurityGroupStack if config exists
+  let securityGroupStack: SecurityGroupStack | undefined;
+  if (securityGroupConfig) {
+    securityGroupStack = new SecurityGroupStack(app, `SecurityGroupStack-${envName}`, {
+      vpc: mainVpcStack.vpc,
+      securityGroupsConfig: securityGroupConfig,
+      env
+    });
+  } else {
+    cdk.Annotations.of(app).addInfo(`No security group configuration found for environment '${envName}' - skipping SecurityGroupStack creation`);
+  }
 
   // Add environment-specific tags to all resources in this environment
   Object.entries(envConfig.tags).forEach(([key, value]) => {
     cdk.Tags.of(mainVpcStack).add(key, value);
-    cdk.Tags.of(securityGroupStack).add(key, value);
+    if (securityGroupStack) {
+      cdk.Tags.of(securityGroupStack).add(key, value);
+    }
   });
 });
