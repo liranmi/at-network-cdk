@@ -87,6 +87,10 @@ describe('SecurityGroupStack', () => {
         // Assert stack creation (2 nested stacks for 600 security groups)
         template.resourceCountIs('AWS::CloudFormation::Stack', 2);
 
+        // Assert number of created resources 
+        const expectedCount = largeSecurityGroupsConfig.securityGroups.length;
+        template.resourceCountIs('AWS::EC2::SecurityGroup', expectedCount);
+
         // Verify the parent stack
         template.hasResource('AWS::CloudFormation::Stack', {
             Type: 'AWS::CloudFormation::Stack',
