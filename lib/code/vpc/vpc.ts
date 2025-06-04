@@ -33,7 +33,11 @@ export class CustomVpc extends Construct {
         // Create subnets
         if (subnetConfigs) {
             for (const subnetConfig of subnetConfigs) {
-                const subnet = new ec2.Subnet(this, subnetConfig.name, subnetConfig);
+                const { vpcId: _ignored, ...subnetProps } = subnetConfig;
+                const subnet = new ec2.Subnet(this, subnetConfig.name, {
+                    ...subnetProps,
+                    vpcId: this.vpc.vpcId,
+                });
                 // Export the subnet ID
                 new cdk.CfnOutput(this, `${subnetConfig.name}-SubnetId`, {
                     value: subnet.subnetId,

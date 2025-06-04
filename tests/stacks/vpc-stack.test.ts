@@ -67,6 +67,19 @@ describe('VpcStack', () => {
             },
         });
     });
+
+    test('subnets reference created VPC', () => {
+        const stack = new VpcStack(app, 'TestVpcStackVpcRef', {
+            vpcConfig: devVpcConfig,
+            env: { region: 'us-east-1' },
+        });
+
+        const template = Template.fromStack(stack);
+
+        template.hasResourceProperties('AWS::EC2::Subnet', {
+            VpcId: { Ref: Match.stringLikeRegexp('CustomVpc.*') },
+        });
+    });
 });
 
 describe('VPC Stack with Production Configuration', () => {
