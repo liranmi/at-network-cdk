@@ -46,15 +46,15 @@ export interface SecurityGroupsConfig {
     /**
      * Version identifier for the config
      */
-    version?: 'v1';
+    readonly version?: 'v1';
 
     /**
      * List of security group configurations
      */
-    securityGroups: SecurityGroupConfig[];
+    readonly securityGroups: SecurityGroupConfig[];
 
     /**
      * Tags to apply to all security groups
      */
-    tags?: { [key: string]: string };
+    readonly tags?: { [key: string]: string };
 } 

@@ -58,12 +58,12 @@ describe('VpcStack', () => {
         });
         const template = Template.fromStack(stack);
 
-        template.hasOutput('VpcId', {
+        template.hasOutput('*', {
             Value: {
                 Ref: Match.stringLikeRegexp('CustomVpc.*'),
             },
             Export: {
-                Name: 'TestVpcStackExports-VpcId',
+                Name: 'CustomVpc-vpc-id',
             },
         });
     });

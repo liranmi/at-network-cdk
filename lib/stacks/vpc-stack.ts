@@ -21,12 +21,5 @@ export class VpcStack extends cdk.Stack {
 
         // Assign the VPC created by the custom construct to the stack property
         this.vpc = customVpc.vpc;
-
-        // Export VPC ID and other attributes for cross-stack references
-        new cdk.CfnOutput(this, 'VpcId', {
-            value: this.vpc.vpcId,
-            description: 'The ID of the VPC',
-            exportName: `${this.stackName}-VpcId`,
-        });
     }
 } 

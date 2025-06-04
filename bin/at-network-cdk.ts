@@ -29,7 +29,6 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
   cdk.Annotations.of(app).addInfo(`DeploymentType: ${envName} env: ${JSON.stringify(env)}`);
 
   const vpcConfig = vpcConfigs[envName as EnvName];
-  const securityGroupConfig = securityGroupConfigs[envName as EnvName];
 
   // Validate that VPC configuration exists (required)
   if (!vpcConfig) {
@@ -40,8 +39,12 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
 
   // Validate configuration versions
   if (vpcConfig.version !== AT_NETWORK_L2_VERSION) {
-    throw new Error(`VPC configuration version mismatch. Expected ${AT_NETWORK_L2_VERSION}, got ${vpcConfig.version}`);
+    const errorMsg = `VPC configuration version mismatch. Expected ${AT_NETWORK_L2_VERSION}, got ${vpcConfig.version}`;
+    cdk.Annotations.of(app).addError(errorMsg);
+    throw new Error(errorMsg);
   }
+
+  const securityGroupConfig = securityGroupConfigs[envName as EnvName];
 
   if (securityGroupConfig && securityGroupConfig.version !== AT_NETWORK_L2_VERSION) {
     throw new Error(`Security Group configuration version mismatch. Expected ${AT_NETWORK_L2_VERSION}, got ${securityGroupConfig.version}`);
@@ -55,7 +58,7 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
 
   // Only create SecurityGroupStack if config exists
   let securityGroupStack: SecurityGroupStack | undefined;
-  if (securityGroupConfig) {
+  if (securityGroupConfig && securityGroupConfig.securityGroups.length > 0) {
     securityGroupStack = new SecurityGroupStack(app, `SecurityGroupStack-${envName}`, {
       vpc: mainVpcStack.vpc,
       securityGroupsConfig: securityGroupConfig,
