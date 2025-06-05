@@ -17,7 +17,7 @@ export class CustomVpc extends Construct {
         const { subnetConfigs, version, tags, maxAzs = 1, ...vpcProps } = props.vpcConfig;
 
         // Create the VPC
-        this.vpc = new ec2.Vpc(this, 'Resource', {
+        this.vpc = new ec2.Vpc(this, vpcProps.vpcName || 'Resource', {
             ...vpcProps,
             subnetConfiguration: [],
             maxAzs,
