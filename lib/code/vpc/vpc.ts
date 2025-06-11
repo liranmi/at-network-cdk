@@ -14,7 +14,7 @@ export class CustomVpc extends Construct {
     constructor(scope: Construct, id: string, props: CustomVpcProps) {
         super(scope, id);
 
-        const { subnetConfigs, version, tags, maxAzs = 1, ...vpcProps } = props.vpcConfig;
+        const { subnetConfigs, version, tags: vpcTags, maxAzs = 1, ...vpcProps } = props.vpcConfig;
 
         // Create the VPC
         this.vpc = new ec2.Vpc(this, vpcProps.vpcName || 'Resource', {
@@ -30,14 +30,27 @@ export class CustomVpc extends Construct {
             exportName: `${id}-vpc-id`
         });
 
+        // Add tags to the VPC
+        if (vpcTags) {
+            Object.entries(vpcTags).forEach(([key, value]) => {
+                Tags.of(this.vpc).add(key, value);
+            });
+        }
+
         // Create subnets
         if (subnetConfigs) {
             for (const subnetConfig of subnetConfigs) {
-                const { vpcId: _ignored, ...subnetProps } = subnetConfig;
+                const { vpcId: _ignored, tags: subnetTags, ...subnetProps } = subnetConfig;
                 const subnet = new ec2.Subnet(this, subnetConfig.name, {
                     ...subnetProps,
                     vpcId: this.vpc.vpcId,
                 });
+                // Add tags to the subnet
+                if (subnetTags) {
+                    Object.entries(subnetTags).forEach(([key, value]) => {
+                        Tags.of(subnet).add(key, value);
+                    });
+                }
                 // Export the subnet ID
                 new cdk.CfnOutput(this, `${subnetConfig.name}-SubnetId`, {
                     value: subnet.subnetId,
@@ -45,13 +58,6 @@ export class CustomVpc extends Construct {
                     exportName: `${id}-${subnetConfig.name}-subnet-id`
                 });
             }
-        }
-
-        // Add tags to the VPC
-        if (tags) {
-            Object.entries(tags).forEach(([key, value]) => {
-                Tags.of(this.vpc).add(key, value);
-            });
         }
 
     }

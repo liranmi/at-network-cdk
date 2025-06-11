@@ -13,13 +13,19 @@ export const prodVpcConfig: VpcConfig = {
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
             cidrBlock: '10.0.0.0/24',
-            mapPublicIpOnLaunch: true
+            mapPublicIpOnLaunch: true,
+            tags: {
+                Name: 'public subnet'
+            }
         },
         {
             name: 'private',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
-            cidrBlock: '10.0.1.0/24'
+            cidrBlock: '10.0.1.0/24',
+            tags: {
+                Name: 'private subnet'
+            }
         }
     ],
     tags: {

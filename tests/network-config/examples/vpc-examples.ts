@@ -67,116 +67,170 @@ export const prodVpcConfig: VpcConfig = {
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
             cidrBlock: '172.16.0.0/24',
-            mapPublicIpOnLaunch: true
+            mapPublicIpOnLaunch: true,
+            tags: {
+                Name: 'TestVpcStack/CustomVpc/public-1'
+            }
         },
         {
             name: 'public-1b',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1b',
             cidrBlock: '172.16.1.0/24',
-            mapPublicIpOnLaunch: true
+            mapPublicIpOnLaunch: true,
+            tags: {
+                Name: 'TestVpcStack/CustomVpc/public-2'
+            }
         },
         {
             name: 'public-1c',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1c',
             cidrBlock: '172.16.2.0/24',
-            mapPublicIpOnLaunch: true
+            mapPublicIpOnLaunch: true,
+            tags: {
+                Name: 'TestVpcStack/CustomVpc/public-3'
+            }
         },
         // Private Subnets (3 AZs)
         {
             name: 'private-1a',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
-            cidrBlock: '172.16.10.0/24'
+            cidrBlock: '172.16.10.0/24',
+            tags: {
+                Name: 'TestVpcStack/CustomVpc/private-1'
+            }
         },
         {
             name: 'private-1b',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1b',
-            cidrBlock: '172.16.11.0/24'
+            cidrBlock: '172.16.11.0/24',
+            tags: {
+                Name: 'TestVpcStack/CustomVpc/private-2'
+            }
         },
         {
             name: 'private-1c',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1c',
-            cidrBlock: '172.16.12.0/24'
+            cidrBlock: '172.16.12.0/24',
+            tags: {
+                Name: 'TestVpcStack/CustomVpc/private-3'
+            }
         },
         // Database Subnets (3 AZs)
         {
             name: 'db-1a',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
-            cidrBlock: '172.16.20.0/24'
+            cidrBlock: '172.16.20.0/24',
+            tags: {
+                Name: 'db subnet'
+            }
         },
         {
             name: 'db-1b',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1b',
-            cidrBlock: '172.16.21.0/24'
+            cidrBlock: '172.16.21.0/24',
+            tags: {
+                Name: 'db subnet'
+            }
         },
         {
             name: 'db-1c',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1c',
-            cidrBlock: '172.16.22.0/24'
+            cidrBlock: '172.16.22.0/24',
+            tags: {
+                Name: 'db subnet'
+            }
         },
         // Application Subnets (3 AZs)
         {
             name: 'app-1a',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
-            cidrBlock: '172.16.30.0/24'
+            cidrBlock: '172.16.30.0/24',
+            tags: {
+                Name: 'app subnet'
+            }
         },
         {
             name: 'app-1b',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1b',
-            cidrBlock: '172.16.31.0/24'
+            cidrBlock: '172.16.31.0/24',
+            tags: {
+                Name: 'app subnet'
+            }
         },
         {
             name: 'app-1c',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1c',
-            cidrBlock: '172.16.32.0/24'
+            cidrBlock: '172.16.32.0/24',
+            tags: {
+                Name: 'app subnet'
+            }
         },
         // Cache Subnets (3 AZs)
         {
             name: 'cache-1a',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
-            cidrBlock: '172.16.40.0/24'
+            cidrBlock: '172.16.40.0/24',
+            tags: {
+                Name: 'cache subnet'
+            }
         },
         {
             name: 'cache-1b',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1b',
-            cidrBlock: '172.16.41.0/24'
+            cidrBlock: '172.16.41.0/24',
+            tags: {
+                Name: 'cache subnet'
+            }
         },
         {
             name: 'cache-1c',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1c',
-            cidrBlock: '172.16.42.0/24'
+            cidrBlock: '172.16.42.0/24',
+            tags: {
+                Name: 'cache subnet'
+            }
         },
         // Backup Subnets (3 AZs)
         {
             name: 'backup-1a',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1a',
-            cidrBlock: '172.16.50.0/24'
+            cidrBlock: '172.16.50.0/24',
+            tags: {
+                Name: 'backup subnet'
+            }
         },
         {
             name: 'backup-1b',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1b',
-            cidrBlock: '172.16.51.0/24'
+            cidrBlock: '172.16.51.0/24',
+            tags: {
+                Name: 'backup subnet'
+            }
         },
         {
             name: 'backup-1c',
             vpcId: '${VpcId}', // Will be replaced by the VPC construct
             availabilityZone: 'us-east-1c',
-            cidrBlock: '172.16.52.0/24'
+            cidrBlock: '172.16.52.0/24',
+            tags: {
+                Name: 'backup subnet'
+            }
         }
     ],
     tags: {
@@ -196,7 +250,10 @@ export const testVpcConfig: VpcConfig = {
     enableDnsSupport: true,
     subnetConfigs: commonSubnetConfigs.map(subnet => ({
         ...subnet,
-        cidrBlock: subnet.name === 'public' ? '192.168.0.0/24' : '192.168.1.0/24'
+        cidrBlock: subnet.name === 'public' ? '192.168.0.0/24' : '192.168.1.0/24',
+        tags: {
+            Name: subnet.name === 'public' ? 'public subnet' : 'private subnet'
+        }
     })),
     tags: {
         Environment: 'test',
