@@ -52,7 +52,8 @@ describe('VpcStack', () => {
                 ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
                 maxAzs: 0,
                 natGateways: 0,
-                subnetConfigs: []
+                subnetConfigs: [],
+                version: 'v1'
             },
             env: { region: 'us-east-1' },
         });

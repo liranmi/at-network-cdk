@@ -44,6 +44,7 @@ const commonSubnetConfigs: SubnetConfig[] = [
  */
 export const devVpcConfig: VpcConfig = {
     ...baseVpcConfig,
+    name: 'dev-vpc',
     ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     subnetConfigs: commonSubnetConfigs,
     tags: {
@@ -59,6 +60,7 @@ export const devVpcConfig: VpcConfig = {
  */
 export const prodVpcConfig: VpcConfig = {
     ...baseVpcConfig,
+    name: 'prod-vpc',
     ipAddresses: ec2.IpAddresses.cidr('172.16.0.0/16'),
     subnetConfigs: [
         // Public Subnets (3 AZs)
@@ -245,6 +247,7 @@ export const prodVpcConfig: VpcConfig = {
  * Defines all properties explicitly.
  */
 export const testVpcConfig: VpcConfig = {
+    name: 'test-vpc',
     ipAddresses: ec2.IpAddresses.cidr('192.168.0.0/16'),
     enableDnsHostnames: true,
     enableDnsSupport: true,

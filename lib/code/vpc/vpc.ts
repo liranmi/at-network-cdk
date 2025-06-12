@@ -14,10 +14,10 @@ export class CustomVpc extends Construct {
     constructor(scope: Construct, id: string, props: CustomVpcProps) {
         super(scope, id);
 
-        const { subnetConfigs, version, tags: vpcTags, maxAzs = 1, ...vpcProps } = props.vpcConfig;
+        const { subnetConfigs, version, tags: vpcTags, maxAzs = 1, name, ...vpcProps } = props.vpcConfig;
 
         // Create the VPC
-        this.vpc = new ec2.Vpc(this, vpcProps.vpcName || 'Resource', {
+        this.vpc = new ec2.Vpc(this, name || 'Vpc', {
             ...vpcProps,
             subnetConfiguration: [],
             maxAzs,

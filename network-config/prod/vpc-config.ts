@@ -18,6 +18,7 @@ import { VpcConfig } from '../../lib/schemas/vpc';
 
 export const prodVpcConfig: VpcConfig = {
     // VPC configuration for prod environment
+    name: 'prod-vpc',
     ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     maxAzs: 0,
     natGateways: 0,
