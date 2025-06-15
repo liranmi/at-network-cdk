@@ -3,6 +3,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Tags } from 'aws-cdk-lib';
 import { VpcConfig } from '../../schemas/vpc';
 import * as cdk from 'aws-cdk-lib';
+import { overrideLogicalId } from '../helpers/logical-id';
 
 export interface CustomVpcProps {
     vpcConfig: VpcConfig;
@@ -37,6 +38,9 @@ export class CustomVpc extends Construct {
             });
         }
 
+        // Override the logical ID of the VPC
+        overrideLogicalId(this.vpc, name || 'Vpc');
+
         // Create subnets
         if (subnetConfigs) {
             for (const subnetConfig of subnetConfigs) {
@@ -57,6 +61,8 @@ export class CustomVpc extends Construct {
                     description: `The ID of the ${subnetConfig.name} subnet`,
                     exportName: `${id}-${subnetConfig.name}-subnet-id`
                 });
+                // Override the logical ID of the subnet
+                overrideLogicalId(subnet, subnetConfig.name);
             }
         }
 

@@ -49,6 +49,7 @@ describe('VpcStack', () => {
     test('exports VpcId', () => {
         const stack = new VpcStack(app, 'TestVpcStackExports', {
             vpcConfig: {
+                name: 'test-vpc',
                 ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
                 maxAzs: 0,
                 natGateways: 0,
@@ -61,7 +62,7 @@ describe('VpcStack', () => {
 
         template.hasOutput('*', {
             Value: {
-                Ref: Match.stringLikeRegexp('CustomVpc.*'),
+                Ref: 'test-vpc',
             },
             Export: {
                 Name: 'CustomVpc-vpc-id',
@@ -71,14 +72,17 @@ describe('VpcStack', () => {
 
     test('subnets reference created VPC', () => {
         const stack = new VpcStack(app, 'TestVpcStackVpcRef', {
-            vpcConfig: devVpcConfig,
+            vpcConfig: {
+                ...devVpcConfig,
+                name: 'dev-vpc'
+            },
             env: { region: 'us-east-1' },
         });
 
         const template = Template.fromStack(stack);
 
         template.hasResourceProperties('AWS::EC2::Subnet', {
-            VpcId: { Ref: Match.stringLikeRegexp('CustomVpc.*') },
+            VpcId: { Ref: 'dev-vpc' },
         });
     });
 });
@@ -124,7 +128,6 @@ describe('VPC Stack with Production Configuration', () => {
             ])
         });
     });
-
 
     test('VPC has correct tags', () => {
         template.hasResourceProperties('AWS::EC2::VPC', {
