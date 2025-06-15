@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Template, Match } from 'aws-cdk-lib/assertions';
 import { SecurityGroupStack } from '../../lib/stacks/security-group-stack';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { devSecurityGroupsConfig, prodSecurityGroupsConfig, largeSecurityGroupsConfig } from '../network-config/examples/security-group-examples';
+import { devSecurityGroupsConfig, prodSecurityGroupsConfig, largeSecurityGroupsConfig, testSecurityGroupsConfig } from '../network-config/examples/security-group-examples';
 import { countResourcesAcrossStacks, getAllStacks } from '../helpers/stacks';
 import { Stack } from 'aws-cdk-lib';
 
@@ -155,6 +155,144 @@ describe('SecurityGroupStack', () => {
                     FromPort: 5432,
                     ToPort: 5432,
                     IpProtocol: 'tcp'
+                }
+            ]
+        });
+    });
+
+    test('creates security groups with comprehensive port configurations', () => {
+        // Create the security group stack with test config
+        const securityGroupStack = new SecurityGroupStack(app, 'TestSecurityGroupStack', {
+            vpc,
+            securityGroupsConfig: testSecurityGroupsConfig
+        });
+
+        const template = Template.fromStack(securityGroupStack);
+
+        // Assert web server security group with various port configurations
+        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+            GroupDescription: 'Security group for web servers with comprehensive port configs',
+            GroupName: 'web-sg-test',
+            SecurityGroupIngress: [
+                {
+                    CidrIp: '0.0.0.0/0',
+                    Description: 'Allow HTTP traffic',
+                    FromPort: 80,
+                    ToPort: 80,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '0.0.0.0/0',
+                    Description: 'Allow HTTPS traffic',
+                    FromPort: 443,
+                    ToPort: 443,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '0.0.0.0/0',
+                    Description: 'Allow custom application port range',
+                    FromPort: 8000,
+                    ToPort: 8100,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '0.0.0.0/0',
+                    Description: 'Allow all traffic (for testing)',
+                    IpProtocol: '-1'
+                }
+            ]
+        });
+
+        // Assert application server security group with UDP and ICMP
+        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+            GroupDescription: 'Security group for application servers with UDP and ICMP',
+            GroupName: 'app-sg-test',
+            SecurityGroupIngress: [
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow TCP application traffic',
+                    FromPort: 8080,
+                    ToPort: 8080,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow DNS traffic',
+                    FromPort: 53,
+                    ToPort: 53,
+                    IpProtocol: 'udp'
+                },
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow ICMP echo requests',
+                    FromPort: 8,
+                    ToPort: -1,
+                    IpProtocol: 'icmp'
+                }
+            ]
+        });
+
+        // Assert database server security group with specific port ranges
+        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+            GroupDescription: 'Security group for database servers with specific port ranges',
+            GroupName: 'db-sg-test',
+            SecurityGroupIngress: [
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow PostgreSQL',
+                    FromPort: 5432,
+                    ToPort: 5432,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow MongoDB',
+                    FromPort: 27017,
+                    ToPort: 27017,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow Redis cluster',
+                    FromPort: 6379,
+                    ToPort: 6380,
+                    IpProtocol: 'tcp'
+                }
+            ]
+        });
+
+        // Assert monitoring server security group with ICMP and custom protocols
+        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+            GroupDescription: 'Security group for monitoring servers',
+            GroupName: 'monitoring-sg-test',
+            SecurityGroupIngress: [
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow Prometheus metrics',
+                    FromPort: 9100,
+                    ToPort: 9100,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow Grafana',
+                    FromPort: 3000,
+                    ToPort: 3000,
+                    IpProtocol: 'tcp'
+                },
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow ICMP echo requests',
+                    FromPort: 8,
+                    ToPort: -1,
+                    IpProtocol: 'icmp'
+                },
+                {
+                    CidrIp: '10.0.0.0/16',
+                    Description: 'Allow ICMP echo replies',
+                    FromPort: 0,
+                    ToPort: -1,
+                    IpProtocol: 'icmp'
                 }
             ]
         });
