@@ -8,13 +8,13 @@ interface EnvironmentConfig {
         [key: string]: {
             account: string | null;
             region: string | null;
-            tags: {
+            tags?: {
                 environment: string;
                 [key: string]: string; // Allow additional environment-specific tags
             };
         };
     };
-    globalTags: {
+    globalTags?: {
         project: string;
         owner: string;
         [key: string]: string; // Allow additional global tags
@@ -23,17 +23,9 @@ interface EnvironmentConfig {
 
 export const environmentConfig: EnvironmentConfig = {
     environments: {
-        prod: {
+        default: {
             account: null,
-            region: null,
-            tags: {
-                environment: 'prod',
-                costCenter: 'prod-cc' // Example of environment-specific tag
-            }
+            region: null
         }
-    },
-    globalTags: {
-        project: 'liran-lab',
-        owner: 'liran'
     }
 }; 

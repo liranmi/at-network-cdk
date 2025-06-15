@@ -11,10 +11,12 @@ const app = new cdk.App();
 // Use the TypeScript environment config
 const cfg = environmentConfig;
 
-// Add global tags to all resources in the app
-Object.entries(cfg.globalTags).forEach(([key, value]) => {
-  cdk.Tags.of(app).add(key, value);
-});
+// Add global tags to all resources in the app if they exist
+if (cfg.globalTags) {
+  Object.entries(cfg.globalTags).forEach(([key, value]) => {
+    cdk.Tags.of(app).add(key, value);
+  });
+}
 
 // Iterate through all environments
 Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
@@ -68,11 +70,13 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
     cdk.Annotations.of(app).addInfo(`No security group configuration found for environment '${envName}' - skipping SecurityGroupStack creation`);
   }
 
-  // Add environment-specific tags to all resources in this environment
-  Object.entries(envConfig.tags).forEach(([key, value]) => {
-    cdk.Tags.of(mainVpcStack).add(key, value);
-    if (securityGroupStack) {
-      cdk.Tags.of(securityGroupStack).add(key, value);
-    }
-  });
+  // Add environment-specific tags to all resources in this environment if they exist
+  if (envConfig.tags) {
+    Object.entries(envConfig.tags).forEach(([key, value]) => {
+      cdk.Tags.of(mainVpcStack).add(key, value);
+      if (securityGroupStack) {
+        cdk.Tags.of(securityGroupStack).add(key, value);
+      }
+    });
+  }
 });

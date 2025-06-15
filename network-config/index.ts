@@ -1,14 +1,12 @@
-
-import { prodVpcConfig } from './prod/vpc-config';
-
-import { prodSecurityGroupsConfig } from './prod/security-group-config';
+import { vpcConfig as defaultVpcConfig } from './default/vpc-config';
+import { securityGroupConfig as defaultSecurityGroupConfig } from './default/security-group-config';
 
 export const vpcConfigs = {
-    prod: prodVpcConfig,
+    default: defaultVpcConfig,
 } as const;
 
 export const securityGroupConfigs = {
-    prod: prodSecurityGroupsConfig,
+    default: defaultSecurityGroupConfig,
 } as const;
 
 export type EnvName = keyof typeof vpcConfigs;
