@@ -16,6 +16,10 @@ interface EnvironmentConfig {
                 environment: string;
                 [key: string]: string; // Allow additional environment-specific tags
             };
+            synthesizer?: {
+                fileAssetsBucketName?: string;
+                bucketPrefix?: string;
+            };
         };
     };
     globalTags?: {

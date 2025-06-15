@@ -60,10 +60,23 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
     throw new Error(`Security Group configuration version mismatch. Expected ${AT_NETWORK_L2_VERSION}, got ${securityGroupConfig.version}`);
   }
 
+  // Create synthesizer with default settings, allowing override from config
+  const synthesizer = new cdk.DefaultStackSynthesizer({
+    fileAssetsBucketName: envConfig.synthesizer?.fileAssetsBucketName,
+    bucketPrefix: envConfig.synthesizer?.bucketPrefix,
+    generateBootstrapVersionRule: false,
+  });
+
+  cdk.Annotations.of(app).addInfo(`Using synthesizer: ${synthesizer.constructor.name}`);
+  if (envConfig.synthesizer?.fileAssetsBucketName) {
+    cdk.Annotations.of(app).addInfo(`Using custom file assets bucket: ${envConfig.synthesizer.fileAssetsBucketName}`);
+  }
+
   // Create the VPC stack with the VPC from main stack
   const mainVpcStack = new VpcStack(app, envConfig.stackNames?.vpcStack || generateUniqueStackName('VpcStack', envName, env), {
     vpcConfig,
-    env
+    env,
+    synthesizer
   });
 
   // Only create SecurityGroupStack if config exists
@@ -72,7 +85,8 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
     securityGroupStack = new SecurityGroupStack(app, envConfig.stackNames?.securityGroupStack || generateUniqueStackName('SecurityGroupStack', envName, env), {
       vpc: mainVpcStack.vpc,
       securityGroupsConfig: securityGroupConfig,
-      env
+      env,
+      synthesizer
     });
   } else {
     cdk.Annotations.of(app).addInfo(`No security group configuration found for environment '${envName}' - skipping SecurityGroupStack creation`);
