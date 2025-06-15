@@ -5,8 +5,16 @@ import { VpcStack } from '../lib/stacks/vpc-stack';
 import { vpcConfigs, EnvName, securityGroupConfigs } from '../network-config';
 import { AT_NETWORK_L2_VERSION, environmentConfig } from '../environment-config';
 import { SecurityGroupStack } from '../lib/stacks/security-group-stack';
+import * as crypto from 'crypto';
 
 const app = new cdk.App();
+
+// Function to generate unique stack name with SHA suffix
+function generateUniqueStackName(baseName: string, envName: string, env: { account?: string; region?: string }): string {
+  const uniqueString = `${baseName}-${envName}-${env.account || 'no-account'}-${env.region || 'no-region'}`;
+  const hash = crypto.createHash('sha256').update(uniqueString).digest('hex').substring(0, 8);
+  return `${baseName}-${hash}`;
+}
 
 // Use the TypeScript environment config
 const cfg = environmentConfig;
@@ -53,7 +61,7 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
   }
 
   // Create the VPC stack with the VPC from main stack
-  const mainVpcStack = new VpcStack(app, `VpcStack-${envName}`, {
+  const mainVpcStack = new VpcStack(app, envConfig.stackNames?.vpcStack || generateUniqueStackName('VpcStack', envName, env), {
     vpcConfig,
     env
   });
@@ -61,7 +69,7 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
   // Only create SecurityGroupStack if config exists
   let securityGroupStack: SecurityGroupStack | undefined;
   if (securityGroupConfig && securityGroupConfig.securityGroups.length > 0) {
-    securityGroupStack = new SecurityGroupStack(app, `SecurityGroupStack-${envName}`, {
+    securityGroupStack = new SecurityGroupStack(app, envConfig.stackNames?.securityGroupStack || generateUniqueStackName('SecurityGroupStack', envName, env), {
       vpc: mainVpcStack.vpc,
       securityGroupsConfig: securityGroupConfig,
       env

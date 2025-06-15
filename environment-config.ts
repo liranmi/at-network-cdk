@@ -8,6 +8,10 @@ interface EnvironmentConfig {
         [key: string]: {
             account: string | null;
             region: string | null;
+            stackNames?: {
+                vpcStack?: string;
+                securityGroupStack?: string;
+            };
             tags?: {
                 environment: string;
                 [key: string]: string; // Allow additional environment-specific tags
