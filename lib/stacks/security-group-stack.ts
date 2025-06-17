@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { SecurityGroupsConfig, SecurityGroupConfig } from '../schemas/securityGroup';
+import { Tags } from 'aws-cdk-lib';
 
 export interface SecurityGroupStackProps extends cdk.StackProps {
     vpc: ec2.IVpc;
@@ -77,6 +78,13 @@ export class SecurityGroupStack extends cdk.Stack {
                     rule.port,
                     rule.description
                 );
+            });
+        }
+
+        // Add tags if defined
+        if (sgConfig.tags) {
+            Object.entries(sgConfig.tags).forEach(([key, value]) => {
+                Tags.of(securityGroup).add(key, value);
             });
         }
     }

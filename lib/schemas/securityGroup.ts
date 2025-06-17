@@ -40,6 +40,11 @@ export interface SecurityGroupConfig extends Omit<ec2.SecurityGroupProps, 'vpc'>
          */
         description?: string;
     }[];
+
+    /**
+     * Tags to apply to the security group
+     */
+    readonly tags?: { [key: string]: string };
 }
 
 export interface SecurityGroupsConfig {
@@ -52,9 +57,4 @@ export interface SecurityGroupsConfig {
      * List of security group configurations
      */
     readonly securityGroups: SecurityGroupConfig[];
-
-    /**
-     * Tags to apply to all security groups
-     */
-    readonly tags?: { [key: string]: string };
 } 

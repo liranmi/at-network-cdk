@@ -19,7 +19,11 @@ export const securityGroupConfig: SecurityGroupsConfig = {
                     port: ec2.Port.tcp(443),
                     description: 'Allow HTTPS traffic'
                 }
-            ]
+            ],
+            tags: {
+                Environment: 'dev',
+                Project: 'my-project'
+            }
         },
         {
             securityGroupName: 'app-sg',
@@ -38,7 +42,11 @@ export const securityGroupConfig: SecurityGroupsConfig = {
                     port: ec2.Port.tcp(5432),
                     description: 'Allow database access'
                 }
-            ]
+            ],
+            tags: {
+                Environment: 'dev',
+                Project: 'my-project'
+            }
         },
         {
             securityGroupName: 'db-sg',
@@ -57,7 +65,11 @@ export const securityGroupConfig: SecurityGroupsConfig = {
                     port: ec2.Port.tcp(5432),
                     description: 'Allow PostgreSQL traffic to VPC'
                 }
-            ]
+            ],
+            tags: {
+                Environment: 'dev',
+                Project: 'my-project'
+            }
         },
         {
             securityGroupName: 'bastion-sg',
@@ -69,11 +81,11 @@ export const securityGroupConfig: SecurityGroupsConfig = {
                     port: ec2.Port.tcp(22),
                     description: 'Allow SSH access from VPC'
                 }
-            ]
+            ],
+            tags: {
+                Environment: 'dev',
+                Project: 'my-project'
+            }
         }
-    ],
-    tags: {
-        Environment: 'prod',
-        Project: 'my-project'
-    }
+    ]
 }; 

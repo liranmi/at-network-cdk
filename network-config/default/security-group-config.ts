@@ -8,8 +8,5 @@ import { SecurityGroupsConfig } from '../../lib/schemas/securityGroup';
 
 export const securityGroupConfig: SecurityGroupsConfig = {
     version: 'v1',
-    securityGroups: [],
-    tags: {
-        Environment: 'default'
-    }
+    securityGroups: []
 }; 

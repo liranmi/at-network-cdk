@@ -6,10 +6,7 @@ import { SecurityGroupsConfig } from '../../../lib/schemas/securityGroup';
  * Can be extended or overridden by environment-specific configs.
  */
 const baseSecurityGroupsConfig: Partial<SecurityGroupsConfig> = {
-    version: 'v1',
-    tags: {
-        Project: 'my-project'
-    }
+    version: 'v1'
 };
 
 /**
@@ -24,6 +21,11 @@ export const devSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'web-sg',
             description: 'Security group for web servers',
             allowAllOutbound: true,
+            tags: {
+                Environment: 'dev',
+                Component: 'web',
+                Project: 'my-project'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.anyIpv4(),
@@ -42,6 +44,11 @@ export const devSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'app-sg',
             description: 'Security group for application servers',
             allowAllOutbound: true,
+            tags: {
+                Environment: 'dev',
+                Component: 'app',
+                Project: 'my-project'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('10.0.0.0/16'),
@@ -55,6 +62,11 @@ export const devSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'db-sg',
             description: 'Security group for database servers',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'dev',
+                Component: 'database',
+                Project: 'my-project'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('10.0.0.0/16'),
@@ -75,6 +87,11 @@ export const devSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'bastion-sg',
             description: 'Security group for bastion hosts',
             allowAllOutbound: true,
+            tags: {
+                Environment: 'dev',
+                Component: 'bastion',
+                Project: 'my-project'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.anyIpv4(),
@@ -83,11 +100,7 @@ export const devSecurityGroupsConfig: SecurityGroupsConfig = {
                 }
             ]
         }
-    ],
-    tags: {
-        Environment: 'dev',
-        Project: 'my-project'
-    }
+    ]
 };
 
 /**
@@ -102,6 +115,12 @@ export const prodSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'web-sg',
             description: 'Security group for web servers',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'prod',
+                Component: 'web',
+                Project: 'my-project',
+                CostCenter: 'prod-web'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.anyIpv4(),
@@ -127,6 +146,12 @@ export const prodSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'app-sg',
             description: 'Security group for application servers',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'prod',
+                Component: 'app',
+                Project: 'my-project',
+                CostCenter: 'prod-app'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('172.16.0.0/16'),
@@ -147,6 +172,12 @@ export const prodSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'db-sg',
             description: 'Security group for database servers',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'prod',
+                Component: 'database',
+                Project: 'my-project',
+                CostCenter: 'prod-db'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('172.16.0.0/16'),
@@ -167,6 +198,12 @@ export const prodSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'bastion-sg',
             description: 'Security group for bastion hosts',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'prod',
+                Component: 'bastion',
+                Project: 'my-project',
+                CostCenter: 'prod-bastion'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('172.16.0.0/16'),
@@ -182,11 +219,7 @@ export const prodSecurityGroupsConfig: SecurityGroupsConfig = {
                 }
             ]
         }
-    ],
-    tags: {
-        Environment: 'prod',
-        Project: 'my-project'
-    }
+    ]
 };
 
 /**
@@ -199,6 +232,12 @@ export const largeSecurityGroupsConfig: SecurityGroupsConfig = {
         securityGroupName: `sg-${i}`,
         description: `Security group ${i}`,
         allowAllOutbound: true,
+        tags: {
+            Environment: 'test',
+            Component: `component-${i % 10}`,
+            Project: 'my-project',
+            Index: i.toString()
+        },
         ingress: [
             {
                 peer: ec2.Peer.anyIpv4(),
@@ -218,11 +257,7 @@ export const largeSecurityGroupsConfig: SecurityGroupsConfig = {
                 description: 'Allow all outbound traffic'
             }
         ]
-    })),
-    tags: {
-        Environment: 'test',
-        Project: 'my-project'
-    }
+    }))
 };
 
 /**
@@ -237,6 +272,12 @@ export const testSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'web-sg-test',
             description: 'Security group for web servers with comprehensive port configs',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'test',
+                Component: 'web-test',
+                Project: 'my-project',
+                TestType: 'comprehensive'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.anyIpv4(),
@@ -277,6 +318,12 @@ export const testSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'app-sg-test',
             description: 'Security group for application servers with UDP and ICMP',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'test',
+                Component: 'app-test',
+                Project: 'my-project',
+                TestType: 'comprehensive'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('10.0.0.0/16'),
@@ -312,6 +359,12 @@ export const testSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'db-sg-test',
             description: 'Security group for database servers with specific port ranges',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'test',
+                Component: 'db-test',
+                Project: 'my-project',
+                TestType: 'comprehensive'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('10.0.0.0/16'),
@@ -347,6 +400,12 @@ export const testSecurityGroupsConfig: SecurityGroupsConfig = {
             securityGroupName: 'monitoring-sg-test',
             description: 'Security group for monitoring servers',
             allowAllOutbound: false,
+            tags: {
+                Environment: 'test',
+                Component: 'monitoring-test',
+                Project: 'my-project',
+                TestType: 'comprehensive'
+            },
             ingress: [
                 {
                     peer: ec2.Peer.ipv4('10.0.0.0/16'),
@@ -382,9 +441,5 @@ export const testSecurityGroupsConfig: SecurityGroupsConfig = {
                 }
             ]
         }
-    ],
-    tags: {
-        Environment: 'test',
-        Project: 'my-project'
-    }
+    ]
 }; 

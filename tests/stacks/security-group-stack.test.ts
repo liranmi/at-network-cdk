@@ -47,10 +47,31 @@ describe('SecurityGroupStack', () => {
         template.resourceCountIs('AWS::EC2::SecurityGroup', 4); // web-sg, app-sg, db-sg, bastion-sg
 
         // Assert web server security group properties
-        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+        const webSg = template.findResources('AWS::EC2::SecurityGroup', {
+            Properties: {
+                GroupName: 'web-sg'
+            }
+        });
+        expect(Object.keys(webSg)).toHaveLength(1);
+        const webSgResource = Object.values(webSg)[0];
+        expect(webSgResource.Properties).toMatchObject({
             GroupDescription: 'Security group for web servers',
             GroupName: 'web-sg',
-            SecurityGroupIngress: [
+            Tags: expect.arrayContaining([
+                {
+                    Key: 'Environment',
+                    Value: 'dev'
+                },
+                {
+                    Key: 'Component',
+                    Value: 'web'
+                },
+                {
+                    Key: 'Project',
+                    Value: 'my-project'
+                }
+            ]),
+            SecurityGroupIngress: expect.arrayContaining([
                 {
                     CidrIp: '0.0.0.0/0',
                     Description: 'Allow HTTP traffic',
@@ -65,14 +86,14 @@ describe('SecurityGroupStack', () => {
                     ToPort: 443,
                     IpProtocol: 'tcp'
                 }
-            ],
-            SecurityGroupEgress: [
+            ]),
+            SecurityGroupEgress: expect.arrayContaining([
                 {
                     CidrIp: '0.0.0.0/0',
                     Description: 'Allow all outbound traffic by default',
                     IpProtocol: '-1'
                 }
-            ]
+            ])
         });
     });
 
@@ -170,10 +191,35 @@ describe('SecurityGroupStack', () => {
         const template = Template.fromStack(securityGroupStack);
 
         // Assert web server security group with various port configurations
-        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+        const webTestSg = template.findResources('AWS::EC2::SecurityGroup', {
+            Properties: {
+                GroupName: 'web-sg-test'
+            }
+        });
+        expect(Object.keys(webTestSg)).toHaveLength(1);
+        const webTestSgResource = Object.values(webTestSg)[0];
+        expect(webTestSgResource.Properties).toMatchObject({
             GroupDescription: 'Security group for web servers with comprehensive port configs',
             GroupName: 'web-sg-test',
-            SecurityGroupIngress: [
+            Tags: expect.arrayContaining([
+                {
+                    Key: 'Environment',
+                    Value: 'test'
+                },
+                {
+                    Key: 'Component',
+                    Value: 'web-test'
+                },
+                {
+                    Key: 'Project',
+                    Value: 'my-project'
+                },
+                {
+                    Key: 'TestType',
+                    Value: 'comprehensive'
+                }
+            ]),
+            SecurityGroupIngress: expect.arrayContaining([
                 {
                     CidrIp: '0.0.0.0/0',
                     Description: 'Allow HTTP traffic',
@@ -200,14 +246,39 @@ describe('SecurityGroupStack', () => {
                     Description: 'Allow all traffic (for testing)',
                     IpProtocol: '-1'
                 }
-            ]
+            ])
         });
 
         // Assert application server security group with UDP and ICMP
-        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+        const appTestSg = template.findResources('AWS::EC2::SecurityGroup', {
+            Properties: {
+                GroupName: 'app-sg-test'
+            }
+        });
+        expect(Object.keys(appTestSg)).toHaveLength(1);
+        const appTestSgResource = Object.values(appTestSg)[0];
+        expect(appTestSgResource.Properties).toMatchObject({
             GroupDescription: 'Security group for application servers with UDP and ICMP',
             GroupName: 'app-sg-test',
-            SecurityGroupIngress: [
+            Tags: expect.arrayContaining([
+                {
+                    Key: 'Environment',
+                    Value: 'test'
+                },
+                {
+                    Key: 'Component',
+                    Value: 'app-test'
+                },
+                {
+                    Key: 'Project',
+                    Value: 'my-project'
+                },
+                {
+                    Key: 'TestType',
+                    Value: 'comprehensive'
+                }
+            ]),
+            SecurityGroupIngress: expect.arrayContaining([
                 {
                     CidrIp: '10.0.0.0/16',
                     Description: 'Allow TCP application traffic',
@@ -229,14 +300,39 @@ describe('SecurityGroupStack', () => {
                     ToPort: -1,
                     IpProtocol: 'icmp'
                 }
-            ]
+            ])
         });
 
         // Assert database server security group with specific port ranges
-        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+        const dbTestSg = template.findResources('AWS::EC2::SecurityGroup', {
+            Properties: {
+                GroupName: 'db-sg-test'
+            }
+        });
+        expect(Object.keys(dbTestSg)).toHaveLength(1);
+        const dbTestSgResource = Object.values(dbTestSg)[0];
+        expect(dbTestSgResource.Properties).toMatchObject({
             GroupDescription: 'Security group for database servers with specific port ranges',
             GroupName: 'db-sg-test',
-            SecurityGroupIngress: [
+            Tags: expect.arrayContaining([
+                {
+                    Key: 'Environment',
+                    Value: 'test'
+                },
+                {
+                    Key: 'Component',
+                    Value: 'db-test'
+                },
+                {
+                    Key: 'Project',
+                    Value: 'my-project'
+                },
+                {
+                    Key: 'TestType',
+                    Value: 'comprehensive'
+                }
+            ]),
+            SecurityGroupIngress: expect.arrayContaining([
                 {
                     CidrIp: '10.0.0.0/16',
                     Description: 'Allow PostgreSQL',
@@ -258,14 +354,39 @@ describe('SecurityGroupStack', () => {
                     ToPort: 6380,
                     IpProtocol: 'tcp'
                 }
-            ]
+            ])
         });
 
         // Assert monitoring server security group with ICMP and custom protocols
-        template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+        const monitoringTestSg = template.findResources('AWS::EC2::SecurityGroup', {
+            Properties: {
+                GroupName: 'monitoring-sg-test'
+            }
+        });
+        expect(Object.keys(monitoringTestSg)).toHaveLength(1);
+        const monitoringTestSgResource = Object.values(monitoringTestSg)[0];
+        expect(monitoringTestSgResource.Properties).toMatchObject({
             GroupDescription: 'Security group for monitoring servers',
             GroupName: 'monitoring-sg-test',
-            SecurityGroupIngress: [
+            Tags: expect.arrayContaining([
+                {
+                    Key: 'Environment',
+                    Value: 'test'
+                },
+                {
+                    Key: 'Component',
+                    Value: 'monitoring-test'
+                },
+                {
+                    Key: 'Project',
+                    Value: 'my-project'
+                },
+                {
+                    Key: 'TestType',
+                    Value: 'comprehensive'
+                }
+            ]),
+            SecurityGroupIngress: expect.arrayContaining([
                 {
                     CidrIp: '10.0.0.0/16',
                     Description: 'Allow Prometheus metrics',
@@ -294,7 +415,7 @@ describe('SecurityGroupStack', () => {
                     ToPort: -1,
                     IpProtocol: 'icmp'
                 }
-            ]
+            ])
         });
     });
 }); 
