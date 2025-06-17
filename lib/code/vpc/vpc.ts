@@ -44,7 +44,7 @@ export class CustomVpc extends Construct {
         // Create subnets
         if (subnetConfigs) {
             for (const subnetConfig of subnetConfigs) {
-                const { vpcId: _ignored, tags: subnetTags, ...subnetProps } = subnetConfig;
+                const { tags: subnetTags, ...subnetProps } = subnetConfig;
                 const subnet = new ec2.Subnet(this, subnetConfig.name, {
                     ...subnetProps,
                     vpcId: this.vpc.vpcId,

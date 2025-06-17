@@ -28,7 +28,7 @@ export interface VpcConfig extends ec2.VpcProps {
 /**
  * SubnetConfig extends the L2 subnet properties with additional properties.
  */
-export interface SubnetConfig extends ec2.SubnetProps {
+export interface SubnetConfig extends Omit<ec2.SubnetProps, 'vpcId'> {
     /**
      * A friendly name for the subnet group or resource ID prefix.
      */

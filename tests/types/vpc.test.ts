@@ -19,14 +19,12 @@ describe('CustomVpc Construct', () => {
                 name: 'public',
                 cidrBlock: '10.1.0.0/24',
                 availabilityZone: 'us-east-1a',
-                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' }),
                 mapPublicIpOnLaunch: true
             },
             {
                 name: 'private',
                 cidrBlock: '10.1.1.0/24',
                 availabilityZone: 'us-east-1a',
-                vpcId: cdk.Token.asString({ Ref: 'MyTestVpcConstructCidrVpc' })
             }
         ];
 
