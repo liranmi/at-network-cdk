@@ -1,7 +1,7 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { SecurityGroupsConfig } from '../../lib/schemas/securityGroup';
 
-export const prodSecurityGroupsConfig: SecurityGroupsConfig = {
+export const securityGroupConfig: SecurityGroupsConfig = {
     version: 'v1',
     securityGroups: [
         {

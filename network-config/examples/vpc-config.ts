@@ -1,7 +1,7 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { VpcConfig } from '../../lib/schemas/vpc';
 
-export const prodVpcConfig: VpcConfig = {
+export const vpcConfig: VpcConfig = {
     // VPC configuration for prod environment
     ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
     enableDnsHostnames: true,

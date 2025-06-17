@@ -13,7 +13,6 @@ interface EnvironmentConfig {
                 securityGroupStack?: string;
             };
             tags?: {
-                environment: string;
                 [key: string]: string; // Allow additional environment-specific tags
             };
             synthesizer?: {
@@ -23,8 +22,6 @@ interface EnvironmentConfig {
         };
     };
     globalTags?: {
-        project: string;
-        owner: string;
         [key: string]: string; // Allow additional global tags
     };
 }
@@ -33,7 +30,7 @@ export const environmentConfig: EnvironmentConfig = {
     environments: {
         default: {
             account: null,
-            region: null
+            region: 'eu-west-1'
         }
     }
 }; 
