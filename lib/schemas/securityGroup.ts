@@ -1,45 +1,45 @@
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 
+/**
+ * L2 rule configuration using CDK's Port class
+ */
+export interface L2SecurityGroupRule {
+    /**
+     * Peer to connect to
+     */
+    peer: ec2.IPeer;
+
+    /**
+     * Port range to allow
+     */
+    port: ec2.Port;
+
+    /**
+     * Description of the rule
+     */
+    description?: string;
+}
+
 export interface SecurityGroupConfig extends Omit<ec2.SecurityGroupProps, 'vpc'> {
     /**
-     * List of ingress rules
+     * List of ingress rules (L2 - inlined)
      */
-    ingress?: {
-        /**
-         * Peer to connect to
-         */
-        peer: ec2.IPeer;
-
-        /**
-         * Port range to allow
-         */
-        port: ec2.Port;
-
-        /**
-         * Description of the rule
-         */
-        description?: string;
-    }[];
+    ingress?: L2SecurityGroupRule[];
 
     /**
-     * List of egress rules
+     * List of egress rules (L2 - inlined)
      */
-    egress?: {
-        /**
-         * Peer to connect to
-         */
-        peer: ec2.IPeer;
+    egress?: L2SecurityGroupRule[];
 
-        /**
-         * Port range to allow
-         */
-        port: ec2.Port;
+    /**
+     * Optional L1 ingress rules for custom protocols
+     */
+    l1Ingress?: ec2.CfnSecurityGroupIngressProps[];
 
-        /**
-         * Description of the rule
-         */
-        description?: string;
-    }[];
+    /**
+     * Optional L1 egress rules for custom protocols
+     */
+    l1Egress?: ec2.CfnSecurityGroupEgressProps[];
 
     /**
      * Tags to apply to the security group
