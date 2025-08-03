@@ -5,6 +5,7 @@ import { VpcStack } from '../lib/stacks/vpc-stack';
 import { vpcConfigs, EnvName, securityGroupConfigs } from '../network-config';
 import { AT_NETWORK_L2_VERSION, environmentConfig } from '../environment-config';
 import { SecurityGroupStack } from '../lib/stacks/security-group-stack';
+import { SecurityGroupTwoPhaseProcessor } from '../lib/stacks/security-group-two-phase-processor';
 import * as crypto from 'crypto';
 
 const app = new cdk.App();
@@ -80,14 +81,36 @@ Object.entries(cfg.environments).forEach(([envName, envConfig]) => {
   });
 
   // Only create SecurityGroupStack if config exists
-  let securityGroupStack: SecurityGroupStack | undefined;
+  let securityGroupStack: SecurityGroupStack | SecurityGroupTwoPhaseProcessor | undefined;
   if (securityGroupConfig && securityGroupConfig.securityGroups.length > 0) {
-    securityGroupStack = new SecurityGroupStack(app, envConfig.stackNames?.securityGroupStack || generateUniqueStackName('SecurityGroupStack', envName, env), {
-      vpc: mainVpcStack.vpc,
-      securityGroupsConfig: securityGroupConfig,
-      env,
-      synthesizer
+    // Check if we should use two-phase processing
+    // This can be determined by checking if there are L1 rules that reference other security groups
+    const hasCrossStackL1Rules = securityGroupConfig.securityGroups.some(sg => {
+      return (sg.l1Ingress && sg.l1Ingress.some(rule => rule.sourceSecurityGroupId)) ||
+        (sg.l1Egress && sg.l1Egress.some(rule => rule.destinationSecurityGroupId));
     });
+
+    if (hasCrossStackL1Rules) {
+      // Use the new two-phase processor
+      securityGroupStack = new SecurityGroupTwoPhaseProcessor(app, envConfig.stackNames?.securityGroupStack || generateUniqueStackName('SecurityGroupTwoPhaseProcessor', envName, env), {
+        vpc: mainVpcStack.vpc,
+        securityGroupsConfig: securityGroupConfig,
+        env,
+        synthesizer
+      });
+
+      cdk.Annotations.of(app).addInfo(`Using two-phase security group processing for environment '${envName}' (detected cross-stack L1 rules)`);
+    } else {
+      // Use the original single-phase stack (backward compatibility)
+      securityGroupStack = new SecurityGroupStack(app, envConfig.stackNames?.securityGroupStack || generateUniqueStackName('SecurityGroupStack', envName, env), {
+        vpc: mainVpcStack.vpc,
+        securityGroupsConfig: securityGroupConfig,
+        env,
+        synthesizer
+      });
+
+      cdk.Annotations.of(app).addInfo(`Using single-phase security group processing for environment '${envName}'`);
+    }
   } else {
     cdk.Annotations.of(app).addInfo(`No security group configuration found for environment '${envName}' - skipping SecurityGroupStack creation`);
   }
